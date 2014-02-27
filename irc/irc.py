@@ -29,31 +29,22 @@ class IRCConfig:
 	channels = {}
 
 	def __init__(self, **kwargs):
-		for arg in kwargs:
-			if arg == "host":
-				self.host = kwargs[arg]
-			elif arg == "port":
-				self.port = kwargs[arg]
-			elif arg == "nick":
-				self.nick = kwargs[arg]
-			elif arg == "user":
-				self.user = kwargs[arg]
-			elif arg == "ident":
-				self.ident = kwargs[arg]
-			elif arg == "realname":
-				self.realname = kwargs[arg]
-			elif arg == "channels":
-				self.channels = kwargs[arg]
+		self.host = kwargs.get("host", "")
+		self.port = kwargs.get("port", 6667)
+		self.nick = kwargs.get("nick", "cee")
+		self.user = kwargs.get("user", "cee")
+		self.ident = kwargs.get("ident", "cee")
+		self.realname = kwargs.get("realname", "cee, the C++ eval bot")
+		self.channels = kwargs.get("channels", {})
 
 
 class IRCUser:
 	user_string = ""
-
-	def get_nick(self):
-		return string.lstrip(self.user_string.split("!")[0], ":")
+	nick = ""
 
 	def __init__(self, raw):
 		self.user_string = raw
+		self.nick = raw.split("!")[0][1:]
 
 class IRCPrivateMessage:
 	sender = IRCUser("")
@@ -65,7 +56,7 @@ class IRCPrivateMessage:
 		if parts[1] != "PRIVMSG":
 			return
 
-		self.sender.user_string = parts[0]
+		self.sender = IRCUser(parts[0])
 		self.destination = parts[2]
 
 		message = parts[3:]
@@ -75,6 +66,9 @@ class IRCPrivateMessage:
 	def __init__(self, *args):
 		if len(args) == 1:
 			self.parse_string(args[0])
+		elif len(args) == 2:
+			self.destination = args[0]
+			self.message = args[1]
 		elif len(args) == 3:
 			self.sender = args[0]
 			self.destination = args[1]
@@ -133,7 +127,7 @@ class IRCConnection:
 
 			if self.ready:
 				if line[1] == "JOIN":
-					if IRCUser(line[0]).get_nick() == self.config.nick:
+					if IRCUser(line[0]).nick == self.config.nick:
 						self.channels[line[2]].joined = True
 				if line[1] == "KICK":
 					if line[3] == self.config.nick:
@@ -187,6 +181,9 @@ class IRCConnection:
 		messages = self.messages[:]
 		self.messages = []
 		return messages
+
+	def send_message(self, message):
+		self.socket_send("PRIVMSG %s :%s" % (message.destination, message.message))
 
 
 	def __init__(self, config):

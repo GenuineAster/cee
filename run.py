@@ -16,10 +16,8 @@ Pull requests and stuff are welcome. Just don't break
 
 """
 import sys
-import socket
 import string
 import time
-from threading import Thread
 from irc.irc import *
 
 IRC = IRCConnection(IRCConfig(host="irc.esper.net"))
@@ -31,6 +29,8 @@ while 1:
 	IRC.parse_buffer()
 
 	for message in IRC.get_messages():
-		print("%s:\t<%s> %s" % (message.destination, message.sender.get_nick(), message.message))
+		print("%s:\t<%s> %s" % (message.destination, message.sender.nick, message.message))
+
+
 
 	time.sleep(0.001)
