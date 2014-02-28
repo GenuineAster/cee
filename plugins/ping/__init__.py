@@ -3,9 +3,9 @@ from plugins.BasePlugin import *
 
 class Plugin(BasePlugin, object):
 
-	name=""
-	author=""
-	description=""
+	name=None
+	author=None
+	description=None
 	connection=None
 
 	def ping(self, data):
@@ -40,6 +40,8 @@ class Plugin(BasePlugin, object):
 		self.description = "A simple ping-pong plugin."
 
 		self.connection = kwargs.get("connection", None)
+
+		self.commands = []
 
 		self.commands.append(Command(self.ping, [r"%%nick%%"], ["ping","Ping","PING"]))
 

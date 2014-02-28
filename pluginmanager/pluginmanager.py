@@ -2,7 +2,7 @@ import imp
 import os
 
 class Plugin(object):
-	data = {}
+	data = None
 	plugin = None
 	plugin_object = None
 
@@ -14,7 +14,7 @@ class PluginManager(object):
 
 	plugin_folder = "./plugins"
 	main_module = "__init__"
-	plugins = []
+	plugins = None
 
 	def get_plugins(self):
 		for i in os.listdir(self.plugin_folder):
@@ -37,3 +37,6 @@ class PluginManager(object):
 		for plugin in self.plugins:
 			plugin.plugin = self.load_plugin(plugin)
 			plugin.plugin_object = plugin.plugin.Plugin(**kwargs)
+
+	def __init__(self):
+		self.plugins = []

@@ -6,16 +6,66 @@ from kitchen.text.converters import to_unicode, to_bytes
 from easyprocess import EasyProcess
 from irc.irc import *
 from plugins.BasePlugin import *
+from utils.Compile import *
 
-compiler_command = ["g++","-Wall","-std=c++11","files/code.cpp","-ofiles/output"];
-run_command = ["files/output"]
+compiler_command = ["g++","-Wall","-std=c++11"];
+
 
 class Plugin(BasePlugin, object):
 
-	name=""
-	author=""
-	description=""
+	name=None
+	author=None
+	description=None
 	connection=None
+
+	def compile_code(self, filename, output):
+		compiler_output_raw = ""
+		compiler_output = []
+		compiler_command_temp = compiler_command
+		compiler_command_temp.append(filename)
+		compiler_command_temp.append("-o%s" % output)
+		compiler_process_data = EasyProcess(compiler_command).call(timeout=30)
+		compiler_output_raw = compiler_process_data.stderr
+
+		if compiler_output_raw:
+			print(to_bytes(to_unicode(compiler_output_raw)))
+			compiler_output = compiler_output_raw.split("\n")
+			compiler_output = filter(lambda x:re.search(r"(error|warning):", x), compiler_output)
+			for i in range(len(compiler_output)):
+				compiler_output[i] = compiler_output[i].split(" ", 1)[1]
+
+			raise CompilerException(compiler_output[0])
+
+			return False
+
+		else:
+			return True
+
+	def run(self, filename):
+		program_output_raw  = ""
+		message_string = ""
+
+		program_output_data = EasyProcess(filename).call(timeout=30)
+		program_output_raw = program_output_data.stdout
+		temp = program_output_raw.replace("\r", "")
+		program_output = temp.split("\n")
+		message_string = program_output[0]
+		message_string.rstrip()
+
+		if program_output[0]:
+
+			if len(program_output) > 1:
+				message_string = message_string + " [+%d deleted lines]" % len(program_output)-1
+
+			max_msg_len = 400-len("[+nnn deleted bytes]")
+			if len(message_string) > max_msg_len:
+				message_string = message_string[max_msg_len:] + "[+%d deleted bytes]" % (len(message_string)-max_msg_len)
+
+		else:
+			message_string = "<no output> ( return value was %d ) " % program_output_data.return_code
+
+		return message_string
+
 
 	def curly_brace_snippet(self, data):
 
@@ -38,45 +88,52 @@ class Plugin(BasePlugin, object):
 		cpp_file.write(data["command"])
 		cpp_file.flush()
 
-		compiler_output_raw = ""
-		program_output_raw  = ""
-		compiler_output = []
-
-		message_string = ""
-
-		compiler_process_data = EasyProcess(compiler_command).call(timeout=30)
-		compiler_output_raw = compiler_process_data.stderr
-
-		if compiler_output_raw:
-			print(to_bytes(to_unicode(compiler_output_raw)))
-			compiler_output = compiler_output_raw.split("\n")
-			compiler_output = filter(lambda x:re.search(r"(error|warning):", x), compiler_output)
-			for i in range(len(compiler_output)):
-				compiler_output[i] = compiler_output[i].split(" ", 1)[1]
-
-			self.connection.send_message(IRCPrivateMessage(dest, compiler_output[0]))
-
+		try:
+			self.compile_code("files/code.cpp", "files/output")
+		except CompilerException as e:
+			self.connection.send_message(IRCPrivateMessage(dest, e.error))
 		else:
-			program_output_data = EasyProcess(run_command).call(timeout=30)
-			program_output_raw = program_output_data.stdout
-			temp = program_output_raw.replace("\r", "")
-			program_output = temp.split("\n")
-			message_string = program_output[0]
-			message_string.rstrip()
+			self.connection.send_message(IRCPrivateMessage(dest, self.run("files/output")))
 
-			if program_output[0]:
+		# compiler_output_raw = ""
+		# program_output_raw  = ""
+		# compiler_output = []
 
-				if len(program_output) > 1:
-					message_string = message_string + " [+%d deleted lines]" % len(program_output)-1
+		# message_string = ""
 
-				max_msg_len = 400-len("[+nnn deleted bytes]")
-				if len(message_string) > max_msg_len:
-					message_string = message_string[max_msg_len:] + "[+%d deleted bytes]" % (len(message_string)-max_msg_len)
+		# compiler_process_data = EasyProcess(compiler_command).call(timeout=30)
+		# compiler_output_raw = compiler_process_data.stderr
 
-			else:
-				message_string = "<no output> ( return value was %d ) " % program_output_data.return_code
+		# if compiler_output_raw:
+		# 	print(to_bytes(to_unicode(compiler_output_raw)))
+		# 	compiler_output = compiler_output_raw.split("\n")
+		# 	compiler_output = filter(lambda x:re.search(r"(error|warning):", x), compiler_output)
+		# 	for i in range(len(compiler_output)):
+		# 		compiler_output[i] = compiler_output[i].split(" ", 1)[1]
 
-			self.connection.send_message(IRCPrivateMessage(dest, message_string))
+		# 	self.connection.send_message(IRCPrivateMessage(dest, compiler_output[0]))
+
+		# else:
+		# 	program_output_data = EasyProcess(run_command).call(timeout=30)
+		# 	program_output_raw = program_output_data.stdout
+		# 	temp = program_output_raw.replace("\r", "")
+		# 	program_output = temp.split("\n")
+		# 	message_string = program_output[0]
+		# 	message_string.rstrip()
+
+		# 	if program_output[0]:
+
+		# 		if len(program_output) > 1:
+		# 			message_string = message_string + " [+%d deleted lines]" % len(program_output)-1
+
+		# 		max_msg_len = 400-len("[+nnn deleted bytes]")
+		# 		if len(message_string) > max_msg_len:
+		# 			message_string = message_string[max_msg_len:] + "[+%d deleted bytes]" % (len(message_string)-max_msg_len)
+
+		# 	else:
+		# 		message_string = "<no output> ( return value was %d ) " % program_output_data.return_code
+
+		# 	self.connection.send_message(IRCPrivateMessage(dest, message_string))
 		return True
 
 	def handle_call(self, message):
@@ -96,6 +153,8 @@ class Plugin(BasePlugin, object):
 		self.description = "A C++ evaluation plugin using g++."
 
 		self.connection = kwargs.get("connection", None)
+
+		self.commands = []
 
 		self.commands.append(Command(self.curly_brace_snippet, ["%%nick%%"], ["{"]))
 

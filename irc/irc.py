@@ -8,9 +8,9 @@ from threading import Thread
 
 class IRCChannel(object):
 	"""Simple channel data"""
-	name = ""
-	joined = False
-	active = True
+	name = None
+	joined = None
+	active = None
 
 	def __init__(self, name):
 		self.name = name
@@ -20,13 +20,13 @@ class IRCChannel(object):
 
 
 class IRCConfig(object):
-	port = 6667
-	host = ""
-	nick = "cee"
-	user = "cee"
-	ident = "cee"
-	realname = "cee, the C++ eval bot"
-	channels = {}
+	port = None
+	host = None
+	nick = None
+	user = None
+	ident = None
+	realname = None
+	channels = None
 
 	def __init__(self, **kwargs):
 		self.host = kwargs.get("host", "")
@@ -51,8 +51,8 @@ class IRCConfig(object):
 
 
 class IRCUser:
-	user_string = ""
-	nick = ""
+	user_string = None
+	nick = None
 
 	def __init__(self, raw):
 		self.user_string = raw
@@ -122,7 +122,7 @@ class IRCConnection(object):
 		lines = self.readlines[:]
 
 		for raw_line in lines:
-			print(raw_line)
+			#print(raw_line)
 
 			line = raw_line
 			line = string.rstrip(line)

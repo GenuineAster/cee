@@ -2,8 +2,8 @@ from irc.irc import *
 import re
 
 class Command(object):
-	prefixes = []
-	words = []
+	prefixes = None
+	words = None
 	function = None
 
 	def find_prefix(self, message, connection):
@@ -47,10 +47,10 @@ class Command(object):
 
 
 class BasePlugin(object):
-	name = ""
-	author = ""
-	description = ""
-	commands = []
+	name = None
+	author = None
+	description = None
+	commands = None
 
 	connection = None
 
