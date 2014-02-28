@@ -1,3 +1,4 @@
+import os
 import sys
 import string
 import time
@@ -21,10 +22,10 @@ class Plugin(BasePlugin, object):
 	def compile_code(self, filename, output):
 		compiler_output_raw = ""
 		compiler_output = []
-		compiler_command_temp = compiler_command
+		compiler_command_temp = compiler_command[:]
 		compiler_command_temp.append(filename)
 		compiler_command_temp.append("-o%s" % output)
-		compiler_process_data = EasyProcess(compiler_command).call(timeout=30)
+		compiler_process_data = EasyProcess(compiler_command_temp).call(timeout=30)
 		compiler_output_raw = compiler_process_data.stderr
 
 		if compiler_output_raw:
@@ -79,14 +80,21 @@ class Plugin(BasePlugin, object):
 		sender = message.sender.nick
 		msg  = message.message
 
+		try:
+			os.remove("files/code.cpp")
+			os.remove("files/output")
+		except OSError as e:
+			pass
+
 		cpp_template_file = open("files/template.cpp", "r")
-		cpp_file = open("files/code.cpp", "w")
+		cpp_file = open("files/code.cpp", "w+")
 		cpp_file.write(cpp_template_file.read())
 		cpp_template_file.close()
 		cpp_file.write("\n")
 		cpp_file.write("int main()\n")
 		cpp_file.write(data["command"])
 		cpp_file.flush()
+		cpp_file.close()
 
 		try:
 			self.compile_code("files/code.cpp", "files/output")
