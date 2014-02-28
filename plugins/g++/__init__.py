@@ -102,8 +102,13 @@ class Plugin(BasePlugin, object):
 			self.connection.send_message(IRCPrivateMessage(dest, e.error))
 		else:
 			self.connection.send_message(IRCPrivateMessage(dest, self.run("files/output")))
-			
+
 		return True
+
+	def stream_snippet(self, data):
+		data["command"] = "{ cout " + data["command"] + "; }"
+		return self.curly_brace_snippet(data)
+
 
 	def handle_call(self, message):
 		for command in self.commands:
@@ -125,6 +130,7 @@ class Plugin(BasePlugin, object):
 
 		self.commands = []
 
-		self.commands.append(Command(self.curly_brace_snippet, ["%%nick%%"], ["{"]))
+		self.commands.append(Command(self.curly_brace_snippet, ["%%nick%%", "g++", ""], ["{"]))
+		self.commands.append(Command(self.stream_snippet, ["%%nick%%", "g++", ""], ["<<"]))
 
 		#super(Plugin, self).__init__(**kwargs)
