@@ -6,7 +6,7 @@ from threading import Thread
 
 
 
-class IRCChannel:
+class IRCChannel(object):
 	"""Simple channel data"""
 	name = ""
 	joined = False
@@ -19,7 +19,7 @@ class IRCChannel:
 
 
 
-class IRCConfig:
+class IRCConfig(object):
 	port = 6667
 	host = ""
 	nick = "cee"
@@ -75,7 +75,7 @@ class IRCPrivateMessage:
 			self.message = args[2]
 
 
-class IRCConnection:
+class IRCConnection(object):
 	config = IRCConfig()
 	sock = socket.socket()
 	readlines = []
@@ -94,7 +94,7 @@ class IRCConnection:
 
 	def process_channels(self):
 		while 1:
-			time.sleep(5)
+			time.sleep(0.5)
 			if self.ready:
 				for channel in self.channels:
 					if self.channels[channel].active:
@@ -116,29 +116,33 @@ class IRCConnection:
 			line = string.rstrip(line)
 			line = string.split(line)
 
-			if len(line) < 1:
-				continue;
+			try:
 
-			if line[0] == "PING":
-				self.socket_send("PONG %s" % line[1])
+				if line[0] == "PING":
+					self.socket_send("PONG %s" % line[1])
 
-			if line[1] == "001":
-				self.ready = True
+				if line[1] == "001":
+					self.ready = True
 
-			if self.ready:
-				if line[1] == "JOIN":
-					if IRCUser(line[0]).nick == self.config.nick:
-						self.channels[line[2]].joined = True
-				if line[1] == "KICK":
-					if line[3] == self.config.nick:
-						self.channels[line[2]].joined = False
-				if line[1] == "PART":
-					if line[3] == self.config.nick:
-						self.channels[line[2]].joined = False
-				if line[1] == "PRIVMSG":
-					self.messages.append(IRCPrivateMessage(raw_line))
+				if self.ready:
+					if line[1] == "JOIN":
+						if IRCUser(line[0]).nick == self.config.nick:
+							self.channels[line[2]].joined = True
+					if line[1] == "KICK":
+						if line[3] == self.config.nick:
+							self.channels[line[2]].joined = False
+					if line[1] == "PART":
+						if line[3] == self.config.nick:
+							self.channels[line[2]].joined = False
+					if line[1] == "PRIVMSG":
+						self.messages.append(IRCPrivateMessage(raw_line))
+			except IndexError as e:
+				print("Caught IndexError in parse_buffer")
 
-			self.readlines.pop(0)
+			try:
+				self.readlines.pop(0)
+			except IndexError as e:
+				None
 
 
 
