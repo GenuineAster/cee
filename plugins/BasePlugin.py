@@ -1,5 +1,6 @@
 from irc.irc import *
 import re
+from kitchen.text.converters import to_bytes
 
 class Command(object):
 	prefixes = None
@@ -9,7 +10,9 @@ class Command(object):
 	def find_prefix(self, message, connection):
 		for prefix in self.prefixes:
 			findstring = re.sub("%%nick%%", connection.config.nick, prefix)
-			if message.message.startswith(findstring):
+			findstring = to_bytes(findstring)
+			msg = to_bytes(message.message)
+			if msg.startswith(findstring):
 				return findstring
 		return None
 
