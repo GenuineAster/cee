@@ -1,5 +1,3 @@
-
-
 class CompilerException(Exception):
 	error = None
 
