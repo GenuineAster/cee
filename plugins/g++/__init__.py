@@ -10,7 +10,7 @@ from plugins.BasePlugin import *
 compiler_command = ["g++","-Wall","-std=c++11","files/code.cpp","-ofiles/output"];
 run_command = ["files/output"]
 
-class Plugin(BasePlugin):
+class Plugin(BasePlugin, object):
 
 	name=""
 	author=""
@@ -99,4 +99,4 @@ class Plugin(BasePlugin):
 
 		self.commands.append(Command(self.curly_brace_snippet, ["%%nick%%"], ["{"]))
 
-		super(Plugin, self).__init__(**kwargs)
+		#super(Plugin, self).__init__(**kwargs)

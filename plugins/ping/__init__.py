@@ -1,7 +1,7 @@
 from irc.irc import *
 from plugins.BasePlugin import *
 
-class Plugin(BasePlugin):
+class Plugin(BasePlugin, object):
 
 	name=""
 	author=""
@@ -43,4 +43,4 @@ class Plugin(BasePlugin):
 
 		self.commands.append(Command(self.ping, [r"%%nick%%"], ["ping","Ping","PING"]))
 
-		super(Plugin, self).__init__(**kwargs)
+		#super(Plugin, self).__init__(**kwargs)

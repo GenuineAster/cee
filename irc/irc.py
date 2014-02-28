@@ -37,6 +37,18 @@ class IRCConfig(object):
 		self.realname = kwargs.get("realname", "cee, the C++ eval bot")
 		self.channels = kwargs.get("channels", {})
 
+		if kwargs.get("config", False):
+			config = kwargs["config"]
+			self.host = config.get("host", "").rstrip()
+			self.port = config.get("port", 6667)
+			self.nick = config.get("nick", "cee").rstrip()
+			self.user = config.get("user", "cee").rstrip()
+			self.ident = config.get("ident", "cee").rstrip()
+			self.realname = config.get("realname", "cee, the C++ eval bot").rstrip()
+			channels = config.get("channels", [])
+			for channel in channels:
+				self.channels[channel] = IRCChannel(channel)
+
 
 class IRCUser:
 	user_string = ""
@@ -46,7 +58,7 @@ class IRCUser:
 		self.user_string = raw
 		self.nick = raw.split("!")[0][1:]
 
-class IRCPrivateMessage:
+class IRCPrivateMessage(object):
 	sender = IRCUser("")
 	destination = ""
 	message = ""
@@ -76,15 +88,15 @@ class IRCPrivateMessage:
 
 
 class IRCConnection(object):
-	config = IRCConfig()
-	sock = socket.socket()
-	readlines = []
-	readbuffer = ""
-	channels = {}
-	messages = []
-	ready = False
-	socket_recieve_thread = Thread()
-	channel_thread = Thread()
+	config = None
+	sock = None
+	readlines = None
+	readbuffer = None
+	channels = None
+	messages = None
+	ready = None
+	socket_recieve_thread = None
+	channel_thread = None
 
 	def join_channel(self, channel):
 		self.channels[channel] = IRCChannel(channel)
@@ -94,7 +106,7 @@ class IRCConnection(object):
 
 	def process_channels(self):
 		while 1:
-			time.sleep(0.5)
+			time.sleep(5)
 			if self.ready:
 				for channel in self.channels:
 					if self.channels[channel].active:
@@ -110,7 +122,7 @@ class IRCConnection(object):
 		lines = self.readlines[:]
 
 		for raw_line in lines:
-			#print(raw_line)
+			print(raw_line)
 
 			line = raw_line
 			line = string.rstrip(line)
@@ -127,7 +139,7 @@ class IRCConnection(object):
 				if self.ready:
 					if line[1] == "JOIN":
 						if IRCUser(line[0]).nick == self.config.nick:
-							self.channels[line[2]].joined = True
+							self.channels[line[2].lstrip(":")].joined = True
 					if line[1] == "KICK":
 						if line[3] == self.config.nick:
 							self.channels[line[2]].joined = False
@@ -139,10 +151,11 @@ class IRCConnection(object):
 			except IndexError as e:
 				print("Caught IndexError in parse_buffer")
 
-			try:
-				self.readlines.pop(0)
-			except IndexError as e:
-				None
+			else:
+				try:
+					self.readlines.pop(0)
+				except IndexError as e:
+					None
 
 
 
@@ -193,3 +206,10 @@ class IRCConnection(object):
 	def __init__(self, config):
 		self.config = config
 		self.channels = self.config.channels
+		self.sock = socket.socket()
+		self.readlines = []
+		self.readbuffer = ""
+		self.messages = []
+		self.ready = False
+
+		#super(IRCConnection, self).__init__()

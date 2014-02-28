@@ -24,8 +24,6 @@ class PluginManager(object):
 			if not os.path.isdir(os.path.join(self.plugin_folder, i)):
 				continue
 
-			print("%s is a dir" % i)
-
 			if ("%s.py"%self.main_module) in os.listdir(os.path.join(self.plugin_folder, i)):
 				location = os.path.join(self.plugin_folder, i)
 				info = imp.find_module(self.main_module, [location])
