@@ -37,3 +37,5 @@ nosetests.xml
 
 *.exe
 files/code.cpp
+files/output
+files/output.exe
