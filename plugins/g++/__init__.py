@@ -55,17 +55,20 @@ class Plugin(BasePlugin, object):
 
 		message_string = to_bytes(message_string)
 
-		if program_output[0]:
+		if not program_output_data.timeout_happened:
+			if program_output[0]:
 
-			if len(program_output) > 1:
-				message_string = to_bytes(message_string + " [+%d deleted lines]" % (len(program_output)-1))
+				if len(program_output) > 1:
+					message_string = to_bytes(message_string + " [+%d deleted lines]" % (len(program_output)-1))
 
-			max_msg_len = 400-len("[+nnn deleted bytes]")
-			if len(message_string) > max_msg_len:
-				message_string = message_string[:max_msg_len] + ("[+%d deleted bytes]" % (len(message_string)-max_msg_len))
+				max_msg_len = 400-len("[+nnn deleted bytes]")
+				if len(message_string) > max_msg_len:
+					message_string = message_string[:max_msg_len] + ("[+%d deleted bytes]" % (len(message_string)-max_msg_len))
 
+			else:
+				message_string = "<no output> ( return value was %d ) " % program_output_data.return_code
 		else:
-			message_string = "<no output> ( return value was %d ) " % program_output_data.return_code
+			message_string = "<killed>"
 
 		return message_string
 
