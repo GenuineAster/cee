@@ -53,23 +53,23 @@ class Plugin(BasePlugin, object):
 		message_string = program_output[0]
 		message_string.rstrip()
 
+		message_string = to_bytes(message_string)
+
 		if program_output[0]:
 
 			if len(program_output) > 1:
-				message_string = message_string + " [+%d deleted lines]" % len(program_output)-1
+				message_string = to_bytes(message_string + " [+%d deleted lines]" % (len(program_output)-1))
 
 			max_msg_len = 400-len("[+nnn deleted bytes]")
 			if len(message_string) > max_msg_len:
-				message_string = message_string[max_msg_len:] + "[+%d deleted bytes]" % (len(message_string)-max_msg_len)
+				message_string = message_string[:max_msg_len] + ("[+%d deleted bytes]" % (len(message_string)-max_msg_len))
 
 		else:
 			message_string = "<no output> ( return value was %d ) " % program_output_data.return_code
 
 		return message_string
 
-
-	def curly_brace_snippet(self, data):
-
+	def snippet(self, data):
 		message = data["message"]
 
 		if message.destination == self.connection.config.nick:
@@ -91,7 +91,6 @@ class Plugin(BasePlugin, object):
 		cpp_file.write(cpp_template_file.read())
 		cpp_template_file.close()
 		cpp_file.write("\n")
-		cpp_file.write("int main()\n")
 		cpp_file.write(data["command"])
 		cpp_file.flush()
 		cpp_file.close()
@@ -105,12 +104,17 @@ class Plugin(BasePlugin, object):
 
 		return True
 
+	def curly_brace_snippet(self, data):
+
+		data["command"] = "int main()\n" + data["command"]
+		return self.snippet(data)
+
 	def stream_snippet(self, data):
 		data["command"] = "{ cout " + data["command"] + "; }"
 		return self.curly_brace_snippet(data)
 
 
-	def handle_call(self, message):
+	def handle_call(self, message, **kwargs):
 		for command in self.commands:
 			data = command.is_called(message, self.connection)
 			if data is False:
@@ -132,5 +136,6 @@ class Plugin(BasePlugin, object):
 
 		self.commands.append(Command(self.curly_brace_snippet, ["%%nick%%", "g++", ""], ["{"]))
 		self.commands.append(Command(self.stream_snippet, ["%%nick%%", "g++", ""], ["<<"]))
+		self.commands.append(Command(self.snippet, ["g++"], [""]))
 
 		#super(Plugin, self).__init__(**kwargs)

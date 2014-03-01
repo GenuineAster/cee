@@ -23,7 +23,7 @@ class Plugin(BasePlugin, object):
 		self.connection.send_message(msg)
 		return True
 
-	def handle_call(self, message):
+	def handle_call(self, message, **kwargs):
 		for command in self.commands:
 			data = command.is_called(message, self.connection)
 			if data is False:

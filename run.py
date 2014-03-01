@@ -41,6 +41,7 @@ def run_irc_instance(config):
 
 	plugin_manager.load_plugins(connection=IRC)
 
+	plugin_names = []
 
 	while 1:
 		IRC.parse_buffer()
@@ -49,7 +50,7 @@ def run_irc_instance(config):
 			print("%s:\t<%s> %s" % (message.destination, message.sender.nick, message.message))
 
 			for plugin in plugin_manager.plugins:
-				if plugin.plugin_object.handle_call(message):
+				if plugin.plugin_object.handle_call(message, plugins=plugin_manager.plugins):
 					break;
 
 
@@ -60,6 +61,5 @@ threads = []
 
 for network_name in config_full["IRC"]:
 	irc_config = config_full["IRC"][network_name]
-	print(irc_config["host"])
 	threads.append(Thread(target=run_irc_instance, args=[irc_config]))
 	threads[-1].start()

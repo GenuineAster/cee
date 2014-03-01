@@ -57,7 +57,7 @@ class BasePlugin(object):
 
 	connection = None
 
-	def handle_call(self, message):
+	def handle_call(self, message, **kwargs):
 		raise NotImplementedError("Please implement handle_call in plugin " % name)
 
 	def __init__(self, **kwargs):

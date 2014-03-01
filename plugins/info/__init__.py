@@ -8,7 +8,7 @@ class Plugin(BasePlugin, object):
 	description=None
 	connection=None
 
-	def source(self, data):
+	def source(self, data, **kwargs):
 
 		dest = ""
 		message = data["message"]
@@ -23,13 +23,48 @@ class Plugin(BasePlugin, object):
 		self.connection.send_message(msg)
 		return True
 
-	def handle_call(self, message):
+	def plugins(self, data, **kwargs):
+		
+		dest = ""
+		message = data["message"]
+
+		if message.destination == self.connection.config.nick:
+			dest = message.sender.nick
+		else:
+			dest = message.destination
+
+		plugins = kwargs.get("plugins", [])[:]
+		plugin_names = []
+
+		command = data["command"].lstrip("plugins")
+		command = command.lstrip()
+		command = command.rstrip()
+
+
+		for plugin in plugins:
+			plugin_names.append(plugin.data["name"])
+
+
+			if plugin.data["name"] == command:
+				commands = []
+				for com in plugin.plugin_object.commands:
+					commands.append([com.prefixes, com.words])
+
+				msg = IRCPrivateMessage(dest, "%s" % commands)
+				self.connection.send_message(msg)
+				return True
+
+		msg = IRCPrivateMessage(dest, "%s" % plugin_names)
+		self.connection.send_message(msg)
+		return True
+
+	def handle_call(self, message, **kwargs):
 		for command in self.commands:
 			data = command.is_called(message, self.connection)
 			if data is False:
 				continue
 
-			return command.function(data)
+			return command.function(data, **kwargs)
 		return False
 
 
@@ -44,3 +79,4 @@ class Plugin(BasePlugin, object):
 		self.commands = []
 
 		self.commands.append(Command(self.source, [r"%%nick%%"], ["source"]))
+		self.commands.append(Command(self.plugins, [r"%%nick%%"], ["plugins"]))
