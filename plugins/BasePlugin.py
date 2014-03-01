@@ -1,4 +1,4 @@
-from irc.irc import *
+import irc
 import re
 from kitchen.text.converters import to_bytes
 

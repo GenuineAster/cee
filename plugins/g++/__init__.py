@@ -5,7 +5,7 @@ import time
 import re
 from kitchen.text.converters import to_unicode, to_bytes
 from easyprocess import EasyProcess
-from irc.irc import *
+from irc import *
 from plugins.BasePlugin import *
 from utils.Compile import *
 

@@ -1,4 +1,4 @@
-from irc.irc import *
+from irc import *
 from plugins.BasePlugin import *
 
 class Plugin(BasePlugin, object):

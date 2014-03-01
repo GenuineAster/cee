@@ -25,10 +25,10 @@ import subprocess
 import re
 from easyprocess import EasyProcess
 from threading import Thread
-from irc.irc import *
+from irc import *
 from plugins.BasePlugin import *
-from pluginmanager.pluginmanager import *
-from configloader.configloader import *
+from pluginmanager import *
+from configloader import *
 
 config_full = get_config("config/cee.conf")
 
