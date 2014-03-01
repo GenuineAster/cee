@@ -106,7 +106,7 @@ class IRCConnection(object):
 
 	def process_channels(self):
 		while 1:
-			time.sleep(5)
+			time.sleep(0.5)
 			if self.ready:
 				for channel in self.channels:
 					if self.channels[channel].active:
