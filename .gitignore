@@ -39,3 +39,4 @@ nosetests.xml
 files/code.cpp
 files/output
 files/output.exe
+supervisor/supervisor
