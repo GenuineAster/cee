@@ -83,7 +83,7 @@ class Plugin(BasePlugin, object):
 		compiler_command_temp.append(filename)
 		compiler_command_temp.append("-o%s" % output)
 		compiler_process_data = EasyProcess(compiler_command_temp).call(timeout=30)
-		compiler_output_raw = compiler_process_data.stderr
+		compiler_output_raw = compiler_process_data.stdout
 
 		if compiler_output_raw:
 			print(to_bytes(to_unicode(compiler_output_raw)))
