@@ -2,6 +2,7 @@ import sys
 import socket
 import time
 import string
+from kitchen.text.converters import to_unicode, to_bytes
 from threading import Thread
 
 
@@ -179,7 +180,7 @@ class IRCConnection(object):
 
 	def socket_send(self, data):
 		try:
-			self.sock.send("%s\r\n" % data)
+			self.sock.send("%s\r\n" % to_bytes(data))
 		except socket.error as e:
 			print("Socket isn't open. Nice try.")
 
