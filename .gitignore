@@ -40,3 +40,5 @@ files/code.cpp
 files/output
 files/output.exe
 supervisor/supervisor
+sftp-config.json
+test.py
