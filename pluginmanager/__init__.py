@@ -1,6 +1,7 @@
 import imp
 import os
 
+
 class Plugin(object):
 	data = None
 	plugin = None
