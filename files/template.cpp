@@ -6,6 +6,8 @@
 #include <sstream>
 #include <ctime>
 #include <cassert>
+#include <cstdlib>
+#include <cstdio>
 
 using namespace std;
 
