@@ -18,6 +18,9 @@ Pull requests and stuff are welcome. Just don't break
 """
 
 import sys
+
+sys.dont_write_bytecode = True
+
 import string
 import time
 import json
@@ -32,16 +35,11 @@ from configloader import *
 
 config_full = get_config("config/cee.conf")
 
-def run_irc_instance(config):
-	plugin_manager = PluginManager()
-	plugin_manager.get_plugins()
+def run_irc_instance(config, plugin_manager):
+
 
 	IRC = IRCConnection(IRCConfig(config=config))
 	IRC.start()
-
-	plugin_manager.load_plugins(connection=IRC)
-
-	plugin_names = []
 
 	while 1:
 		IRC.parse_buffer()
@@ -50,7 +48,7 @@ def run_irc_instance(config):
 			print("%s:\t<%s> %s" % (message.destination, message.sender.nick, message.message))
 
 			for plugin in plugin_manager.plugins:
-				if plugin.plugin_object.handle_call(message, plugins=plugin_manager.plugins):
+				if plugin.plugin_object.handle_call(message, plugins=plugin_manager.plugins, connection=IRC):
 					break;
 
 
@@ -58,8 +56,11 @@ def run_irc_instance(config):
 
 threads = []
 
+plugin_manager = PluginManager()
+plugin_manager.get_plugins()
+plugin_manager.load_plugins()
 
 for network_name in config_full["IRC"]:
 	irc_config = config_full["IRC"][network_name]
-	threads.append(Thread(target=run_irc_instance, args=[irc_config]))
+	threads.append(Thread(target=run_irc_instance, args=[irc_config, plugin_manager]))
 	threads[-1].start()
