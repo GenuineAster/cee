@@ -22,9 +22,38 @@ class Plugin(BasePlugin, object):
 
 		channels.lstrip()
 		channels.rstrip()
-		channels = channels.split()[1]
+		channels = channels.split()
+		if len(channels) < 2:
+			return True
+
+		channels = channels[1]
+
 
 		self.connection.join_channels(channels)
+		return True
+
+	def part(self, data):
+
+		dest = ""
+		message = data["message"]
+
+		if message.destination == self.connection.config.nick:
+			dest = message.sender.nick
+		else:
+			dest = message.destination
+
+		channels = data.get("command", "")
+
+		channels.lstrip()
+		channels.rstrip()
+		channels = channels.split()
+		if len(channels) < 2:
+			print(channels)
+			self.connection.part_channel(message.destination)
+		else:
+			channels = channels[1]
+			self.connection.part_channels(channels)
+
 		return True
 
 	def handle_call(self, message, **kwargs):
@@ -49,5 +78,6 @@ class Plugin(BasePlugin, object):
 		self.commands = []
 
 		self.commands.append(Command(self.join, [r"%%nick%%"], ["join","Join","JOIN"]))
+		self.commands.append(Command(self.part, [r"%%nick%%"], ["part","Part","PART"]))
 
 		#super(Plugin, self).__init__(**kwargs)

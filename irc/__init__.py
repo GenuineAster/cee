@@ -107,7 +107,11 @@ class IRCConnection(object):
 			self.join_channel(channel)
 
 	def part_channel(self, channel):
-		self.channel[channel].active = False
+		self.channels[channel].active = False
+
+	def part_channels(self, channels):
+		for channel in channels.split(","):
+			self.part_channel(channel)
 
 	def process_channels(self):
 		while 1:
