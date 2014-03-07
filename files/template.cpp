@@ -14,6 +14,41 @@
 #include <fstream>
 #include <algorithm>
 #include <numeric>
+#include <iterator>
+#include <functional>
+#include <ctime>
+#include <chrono>
+#include <initializer_list>
+#include <tuple>
+#include <memory>
+#include <limits>
+#include <exception>
+#include <cassert>
+#include <array>
+#include <deque>
+#include <forward_list>
+#include <set>
+#include <map>
+#include <unordered_set>
+#include <unordered_map>
+#include <stack>
+#include <queue>
+#include <complex>
+#include <valarray>
+#include <random>
+#include <ratio>
+#include <cfenv>
+#include <ios>
+#include <iomanip>
+#include <sstream>
+#include <locale>
+#include <clocale>
+#include <regex>
+#include <atomic>
+#include <thread>
+#include <mutex>
+#include <future>
+#include <condition_variable>
 
 using namespace std;
 
