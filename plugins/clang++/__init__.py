@@ -10,7 +10,7 @@ from plugins.BasePlugin import *
 from utils.Compile import *
 from sandbox import *
 
-compiler_gcc = ["g++","-Wall","-std=c++11"];
+compiler_clang = ["clang++","-Wall","-std=c++11"];
 
 
 system, machine = os.uname()[0], os.uname()[4]
@@ -79,7 +79,7 @@ class Plugin(BasePlugin, object):
 	def compile_code(self, filename, output):
 		compiler_output_raw = ""
 		compiler_output = []
-		compiler_command_temp = compiler_gcc[:]
+		compiler_command_temp = compiler_clang[:]
 		compiler_command_temp.append(filename)
 		compiler_command_temp.append("-o%s" % output)
 		compiler_process_data = EasyProcess(compiler_command_temp).call(timeout=30)
@@ -217,14 +217,15 @@ class Plugin(BasePlugin, object):
 
 
 	def __init__(self, **kwargs):
-		self.name = "g++"
+		self.name = "clang++"
 		self.author = "Mischa-Alff"
-		self.description = "A C++ evaluation plugin using g++."
+		self.description = "A C++ evaluation plugin using clang++."
 
 		self.connection = kwargs.get("connection", None)
 
 		self.commands = []
 
-		self.commands.append(Command(self.curly_brace_snippet, ["%%nick%%", "g++", ""], ["{"]))
-		self.commands.append(Command(self.stream_snippet, ["%%nick%%", "g++", ""], ["<<"]))
-		self.commands.append(Command(self.snippet, ["g++"], [""]))
+		self.commands.append(Command(self.curly_brace_snippet, ["clang"], ["{"]))
+		self.commands.append(Command(self.stream_snippet, ["clang"], ["<<"]))
+		self.commands.append(Command(self.snippet, ["clang"], [""]))
+
