@@ -170,13 +170,13 @@ class Plugin(BasePlugin, object):
 		msg  = message.message
 
 		try:
-			os.remove("files/code.cpp")
-			os.remove("files/output")
+			os.remove("files/output/code.cpp")
+			os.remove("files/output/output")
 		except OSError as e:
 			pass
 
 		cpp_template_file = open("files/template.cpp", "r")
-		cpp_file = open("files/code.cpp", "w+")
+		cpp_file = open("files/output/code.cpp", "w+")
 		cpp_file.write(cpp_template_file.read())
 		cpp_template_file.close()
 		cpp_file.write("\n")
@@ -185,11 +185,11 @@ class Plugin(BasePlugin, object):
 		cpp_file.close()
 
 		try:
-			self.compile_code("files/code.cpp", "files/output")
+			self.compile_code("files/output/code.cpp", "files/output/output")
 		except CompilerException as e:
 			self.connection.send_message(IRCPrivateMessage(dest, e.error))
 		else:
-			self.connection.send_message(IRCPrivateMessage(dest, self.run("files/output")))
+			self.connection.send_message(IRCPrivateMessage(dest, self.run("files/output/output")))
 
 		return True
 

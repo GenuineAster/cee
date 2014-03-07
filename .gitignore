@@ -36,9 +36,9 @@ nosetests.xml
 .pydevproject
 
 *.exe
-files/code.cpp
-files/output
-files/output.exe
+files/output/code.cpp
+files/output/output
+files/output/output.exe
 supervisor/supervisor
 sftp-config.json
 test.py
