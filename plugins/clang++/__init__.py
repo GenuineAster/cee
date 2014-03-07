@@ -10,7 +10,7 @@ from plugins.BasePlugin import *
 from utils.Compile import *
 from sandbox import *
 
-compiler_clang = ["clang++","-Wall","-std=c++11"];
+compiler_clang = ["clang++","-Wall","-std=c++11", "-fmessage-length=0", "-ftemplate-depth-128", "-fno-elide-constructors", "-fstrict-aliasing", "-fstack-protector-all"]
 
 
 system, machine = os.uname()[0], os.uname()[4]

@@ -10,7 +10,7 @@ from plugins.BasePlugin import *
 from utils.Compile import *
 from sandbox import *
 
-compiler_gcc = ["g++","-Wall","-std=c++11"];
+compiler_gcc = ["g++","-Wall","-std=c++11", "-finput-charset=UTF-8", "-fno-use-linker-plugin", "-fmessage-length=0", "-ftemplate-depth-128", "-fno-merge-constants", "-fno-nonansi-builtins", "-fno-gnu-keywords", "-fno-elide-constructors", "-fstrict-aliasing", "-fstack-protector-all"]
 
 
 system, machine = os.uname()[0], os.uname()[4]
