@@ -102,6 +102,10 @@ class IRCConnection(object):
 	def join_channel(self, channel):
 		self.channels[channel] = IRCChannel(channel)
 
+	def join_channels(self, channels):
+		for channel in channels.split(","):
+			self.join_channel(channel)
+
 	def part_channel(self, channel):
 		self.channel[channel].active = False
 
