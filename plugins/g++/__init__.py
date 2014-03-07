@@ -86,7 +86,6 @@ class Plugin(BasePlugin, object):
 		compiler_output_raw = compiler_process_data.stdout + compiler_process_data.stderr
 
 		if compiler_output_raw:
-			print(to_bytes(to_unicode(compiler_output_raw)))
 			compiler_output = compiler_output_raw.split("\n")
 			compiler_output = filter(lambda x:re.search(r"(error|warning):", x), compiler_output)
 			for i in range(len(compiler_output)):
@@ -141,7 +140,7 @@ class Plugin(BasePlugin, object):
 			print(program_output_data.get("result", False))
 
 			if program_output_data.get("result", False) is "TL":
-				message_string = "<killed>"
+				message_string = "<killed> ( timed out )"
 			elif program_output_data.get("result", False) is "RF":
 				message_string = "<killed> ( restricted function used )"
 			else:
