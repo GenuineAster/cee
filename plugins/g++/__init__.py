@@ -102,7 +102,7 @@ class Plugin(BasePlugin, object):
 		program_output_raw  = ""
 		message_string = ""
 
-		output = open("/tmp/cee_output", "w+")
+		output = open("files/output/cee_output", "w+")
 
 		cookbook = {
 			'args': os.path.join(os.getcwd(),filename),               # targeted program
@@ -126,7 +126,7 @@ class Plugin(BasePlugin, object):
 
 			output.flush()
 			output.close()
-			output = open("/tmp/cee_output", "r")
+			output = open("files/output/cee_output", "r")
 
 			program_output_raw = output.read()
 
