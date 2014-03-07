@@ -48,7 +48,7 @@ def run_irc_instance(config, plugin_manager):
 			print("%s:\t<%s> %s" % (message.destination, message.sender.nick, message.message))
 
 			for plugin in plugin_manager.plugins:
-				if plugin.plugin_object.handle_call(message, plugins=plugin_manager.plugins, connection=IRC):
+				if plugin.plugin_object.handle_call(message, plugin_manager=plugin_manager, connection=IRC):
 					break;
 
 

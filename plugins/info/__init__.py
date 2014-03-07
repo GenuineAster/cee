@@ -33,7 +33,8 @@ class Plugin(BasePlugin, object):
 		else:
 			dest = message.destination
 
-		plugins = kwargs.get("plugins", [])[:]
+		plugin_manager = kwargs.get("plugin_manager", [])
+		plugins = plugin_manager.plugins[:]
 		plugin_names = []
 
 		command = data["command"].lstrip("plugins")
@@ -65,6 +66,7 @@ class Plugin(BasePlugin, object):
 			if data is False:
 				continue
 
+			data["plugin_manager"] = kwargs.get("plugin_manager", None)
 			return command.function(data, **kwargs)
 		return False
 
