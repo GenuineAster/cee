@@ -182,6 +182,8 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
             msb.run()
         except ValueError:
             return "<killed> ( recieved fork attempt )"
+            output.flush()
+            output.close()
         else:
             # verbose statistics
             program_output_data = msb.probe()
@@ -211,16 +213,16 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
                     if len(program_output) > 1:
                         message_string = to_bytes(
                             message_string +
-                            " [+%d deleted lines]" % (len(program_output)-1)
+                            " [+%d deleted lines]" % (len(program_output) - 1)
                         )
 
-                    max_msg_len = 400-len("[+nnn deleted bytes]")
+                    max_msg_len = 400 - len("[+nnn deleted bytes]")
                     if len(message_string) > max_msg_len:
                         message_string = (
                             message_string[:max_msg_len] +
                             (
                                 "[+%d deleted bytes]" %
-                                (len(message_string)-max_msg_len)
+                                (len(message_string) - max_msg_len)
                             )
                         )
 

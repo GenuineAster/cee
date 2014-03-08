@@ -176,6 +176,8 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
             msb.run()
         except ValueError:
             return "<killed> ( recieved fork attempt )"
+            output.flush()
+            output.close()
         else:
             # verbose statistics
             program_output_data = msb.probe()
