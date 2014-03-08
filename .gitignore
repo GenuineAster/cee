@@ -42,3 +42,6 @@ files/output/output.exe
 supervisor/supervisor
 sftp-config.json
 test.py
+
+*.sublime-project
+*.sublime-workspace

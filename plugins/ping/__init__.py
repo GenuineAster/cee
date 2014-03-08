@@ -1,8 +1,8 @@
-from irc import *
-from plugins.BasePlugin import *
+import irc
+import plugins.BasePlugin
 
 
-class Plugin(BasePlugin, object):
+class Plugin(plugins.BasePlugin.BasePlugin, object):
 
     name = None
     author = None
@@ -19,7 +19,7 @@ class Plugin(BasePlugin, object):
         else:
             dest = message.destination
 
-        msg = IRCPrivateMessage(dest, "%s: pong!" % message.sender.nick)
+        msg = irc.IRCPrivateMessage(dest, "%s: pong!" % message.sender.nick)
         self.connection.send_message(msg)
         return True
 
@@ -43,5 +43,7 @@ class Plugin(BasePlugin, object):
         self.commands = []
 
         self.commands.append(
-            Command(self.ping, [r"%%nick%%"], ["ping", "Ping", "PING"])
+            plugins.BasePlugin.Command(
+                self.ping, [r"%%nick%%"], ["ping", "Ping", "PING"]
+            )
         )

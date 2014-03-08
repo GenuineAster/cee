@@ -2,11 +2,11 @@ import os
 import sys
 import re
 from kitchen.text.converters import to_bytes
-from easyprocess import EasyProcess
-from irc import *
-from plugins.BasePlugin import *
-from utils.Compile import *
-from sandbox import *
+import easyprocess
+import irc
+import plugins.BasePlugin
+import utils.Compile
+import sandbox
 
 compiler_gcc = [
     "g++",
@@ -28,7 +28,7 @@ compiler_gcc = [
 system, machine = os.uname()[0], os.uname()[4]
 
 
-class MiniSandbox(SandboxPolicy, Sandbox):
+class MiniSandbox(sandbox.SandboxPolicy, sandbox.Sandbox):
     sc_table = None
     # white list of essential linux syscalls for statically-linked C programs
     sc_safe = dict(
@@ -72,7 +72,7 @@ class MiniSandbox(SandboxPolicy, Sandbox):
     # result code translation table
     result_name = dict(
         (
-            getattr(Sandbox, 'S_RESULT_%s' % r), r
+            getattr(sandbox.Sandbox, 'S_RESULT_%s' % r), r
         )
         for r in (
             'PD', 'OK', 'RF', 'RT', 'TL', 'ML', 'OL', 'AT', 'IE', 'BP'
@@ -90,13 +90,13 @@ class MiniSandbox(SandboxPolicy, Sandbox):
             for scno in MiniSandbox.sc_safe[machine]:
                 self.sc_table[scno] = self._CONT
         # initialize as a polymorphic sandbox-and-policy object
-        SandboxPolicy.__init__(self)
-        Sandbox.__init__(self, *args, **kwds)
+        sandbox.SandboxPolicy.__init__(self)
+        sandbox.Sandbox.__init__(self, *args, **kwds)
         self.policy = self  # apply local policy rules
 
     def probe(self):
         # add custom entries into the probe dict
-        d = Sandbox.probe(self, False)
+        d = sandbox.Sandbox.probe(self, False)
         d['cpu'] = d['cpu_info'][0]
         d['mem'] = d['mem_info'][1]
         d['result'] = MiniSandbox.result_name.get(self.result, 'NA')
@@ -104,24 +104,24 @@ class MiniSandbox(SandboxPolicy, Sandbox):
 
     def __call__(self, e, a):
         # handle SYSCALL/SYSRET events with local rules
-        if e.type in (S_EVENT_SYSCALL, S_EVENT_SYSRET):
+        if e.type in (sandbox.S_EVENT_SYSCALL, sandbox.S_EVENT_SYSRET):
             scinfo = (e.data, e.ext0) if machine == 'x86_64' else e.data
             rule = self.sc_table.get(scinfo, self._KILL_RF)
             #print({sc_table})
             return rule(e, a)
         # bypass other events to base class
-        return SandboxPolicy.__call__(self, e, a)
+        return sandbox.SandboxPolicy.__call__(self, e, a)
 
     def _CONT(self, e, a):  # continue
-        a.type = S_ACTION_CONT
+        a.type = sandbox.S_ACTION_CONT
         return a
 
     def _KILL_RF(self, e, a):  # restricted func.
-        a.type, a.data = S_ACTION_KILL, S_RESULT_RF
+        a.type, a.data = sandbox.S_ACTION_KILL, sandbox.S_RESULT_RF
         return a
 
 
-class Plugin(BasePlugin, object):
+class Plugin(plugins.BasePlugin.BasePlugin, object):
 
     name = None
     author = None
@@ -134,7 +134,7 @@ class Plugin(BasePlugin, object):
         compiler_command_temp = compiler_gcc[:]
         compiler_command_temp.append(filename)
         compiler_command_temp.append("-o%s" % output)
-        compiler_process_data = EasyProcess(
+        compiler_process_data = easyprocess.EasyProcess(
             compiler_command_temp
         ).call(timeout=30)
         compiler_output_raw = (
@@ -151,7 +151,7 @@ class Plugin(BasePlugin, object):
             for i in range(len(compiler_output)):
                 compiler_output[i] = compiler_output[i].split(" ", 1)[1]
 
-            raise CompilerException(compiler_output[0])
+            raise utils.Compile.CompilerException(compiler_output[0])
 
             return False
 
@@ -256,11 +256,11 @@ class Plugin(BasePlugin, object):
 
         try:
             self.compile_code("files/output/code.cpp", "files/output/output")
-        except CompilerException as e:
-            self.connection.send_message(IRCPrivateMessage(dest, e.error))
+        except utils.Compiler.CompilerException as e:
+            self.connection.send_message(irc.IRCPrivateMessage(dest, e.error))
         else:
             self.connection.send_message(
-                IRCPrivateMessage(dest, self.run("files/output/output"))
+                irc.IRCPrivateMessage(dest, self.run("files/output/output"))
             )
 
         return True
@@ -294,11 +294,17 @@ class Plugin(BasePlugin, object):
         self.commands = []
 
         self.commands.append(
-            Command(self.curly_brace_snippet, ["%%nick%%", "g++", ""], ["{"])
+            plugins.BasePlugin.Command(
+                self.curly_brace_snippet, ["%%nick%%", "g++", ""], ["{"]
+            )
         )
         self.commands.append(
-            Command(self.stream_snippet, ["%%nick%%", "g++", ""], ["<<"])
+            plugins.BasePlugin.Command(
+                self.stream_snippet, ["%%nick%%", "g++", ""], ["<<"]
+            )
         )
         self.commands.append(
-            Command(self.snippet, ["g++"], [""])
+            plugins.BasePlugin.Command(
+                self.snippet, ["g++"], [""]
+            )
         )

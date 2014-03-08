@@ -1,8 +1,8 @@
-from irc import *
-from plugins.BasePlugin import *
+import irc  # noqa
+import plugins.BasePlugin
 
 
-class Plugin(BasePlugin, object):
+class Plugin(plugins.BasePlugin.BasePlugin, object):
 
     name = None
     author = None
@@ -26,6 +26,7 @@ class Plugin(BasePlugin, object):
 
     def part(self, data):
 
+        message = data["message"]
         channels = data.get("command", "")
 
         channels.lstrip()
@@ -61,10 +62,14 @@ class Plugin(BasePlugin, object):
         self.commands = []
 
         self.commands.append(
-            Command(self.join, [r"%%nick%%"], ["join", "Join", "JOIN"])
+            plugins.BasePlugin.Command(
+                self.join, [r"%%nick%%"], ["join", "Join", "JOIN"]
+            )
         )
         self.commands.append(
-            Command(self.part, [r"%%nick%%"], ["part", "Part", "PART"])
+            plugins.BasePlugin.Command(
+                self.part, [r"%%nick%%"], ["part", "Part", "PART"]
+            )
         )
 
         #super(Plugin, self).__init__(**kwargs)

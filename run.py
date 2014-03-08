@@ -23,18 +23,17 @@ sys.dont_write_bytecode = True
 
 import time
 from threading import Thread
-from irc import *
-from plugins.BasePlugin import *
-from pluginmanager import *
-from configloader import *
+import irc
+import pluginmanager
+import configloader
 
 
-config_full = get_config("config/cee.conf")
+config_full = configloader.get_config("config/cee.conf")
 
 
 def run_irc_instance(config, plugin_manager):
 
-    IRC = IRCConnection(IRCConfig(config=config))
+    IRC = irc.IRCConnection(irc.IRCConfig(config=config))
     IRC.start()
 
     while 1:
@@ -62,7 +61,7 @@ def run_irc_instance(config, plugin_manager):
 
 threads = []
 
-plugin_manager = PluginManager()
+plugin_manager = pluginmanager.PluginManager()
 plugin_manager.get_plugins()
 plugin_manager.load_plugins()
 

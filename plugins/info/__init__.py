@@ -1,8 +1,8 @@
-from irc import *
-from plugins.BasePlugin import *
+import irc
+import plugins.BasePlugin
 
 
-class Plugin(BasePlugin, object):
+class Plugin(plugins.BasePlugin.BasePlugin, object):
 
     name = None
     author = None
@@ -19,7 +19,7 @@ class Plugin(BasePlugin, object):
         else:
             dest = message.destination
 
-        msg = IRCPrivateMessage(
+        msg = irc.IRCPrivateMessage(
             dest,
             "%s: https://github.com/Mischa-Alff/cee" % message.sender.nick
         )
@@ -51,11 +51,11 @@ class Plugin(BasePlugin, object):
                 for com in plugin.plugin_object.commands:
                     commands.append([com.prefixes, com.words])
 
-                msg = IRCPrivateMessage(dest, "%s" % commands)
+                msg = irc.IRCPrivateMessage(dest, "%s" % commands)
                 self.connection.send_message(msg)
                 return True
 
-        msg = IRCPrivateMessage(dest, "%s" % plugin_names)
+        msg = irc.IRCPrivateMessage(dest, "%s" % plugin_names)
         self.connection.send_message(msg)
         return True
 
@@ -81,8 +81,12 @@ class Plugin(BasePlugin, object):
         self.commands = []
 
         self.commands.append(
-            Command(self.source, [r"%%nick%%"], ["source"])
+            plugins.BasePlugin.Command(
+                self.source, [r"%%nick%%"], ["source"]
+            )
         )
         self.commands.append(
-            Command(self.plugins, [r"%%nick%%"], ["plugins"])
+            plugins.Baseplugin.Command(
+                self.plugins, [r"%%nick%%"], ["plugins"]
+            )
         )

@@ -1,8 +1,8 @@
-from irc import *
-from plugins.BasePlugin import *
+import irc
+import plugins.BasePlugin
 
 
-class Plugin(BasePlugin, object):
+class Plugin(plugins.BasePlugin.BasePlugin, object):
 
     name = None
     author = None
@@ -25,7 +25,7 @@ class Plugin(BasePlugin, object):
         plugin_manager.get_plugins()
         plugin_manager.load_plugins()
 
-        msg = IRCPrivateMessage(
+        msg = irc.IRCPrivateMessage(
             dest,
             "%s: reloaded." % message.sender.nick
         )
@@ -52,5 +52,7 @@ class Plugin(BasePlugin, object):
         self.commands = []
 
         self.commands.append(
-            Command(self.reload, [r"%%nick%%"], ["reload"])
+            plugins.BasePlugin.Command(
+                self.reload, [r"%%nick%%"], ["reload"]
+            )
         )
