@@ -1,5 +1,5 @@
 class CompilerException(Exception):
-	error = None
+    error = None
 
-	def __init__(self, error):
-		self.error = error
+    def __init__(self, error):
+        self.error = error

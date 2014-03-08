@@ -1,83 +1,70 @@
 from irc import *
 from plugins.BasePlugin import *
 
+
 class Plugin(BasePlugin, object):
 
-	name=None
-	author=None
-	description=None
-	connection=None
+    name = None
+    author = None
+    description = None
+    connection = None
 
-	def join(self, data):
+    def join(self, data):
 
-		dest = ""
-		message = data["message"]
+        channels = data.get("command", "")
 
-		if message.destination == self.connection.config.nick:
-			dest = message.sender.nick
-		else:
-			dest = message.destination
+        channels.lstrip()
+        channels.rstrip()
+        channels = channels.split()
+        if len(channels) < 2:
+            return True
 
-		channels = data.get("command", "")
+        channels = channels[1]
 
-		channels.lstrip()
-		channels.rstrip()
-		channels = channels.split()
-		if len(channels) < 2:
-			return True
+        self.connection.join_channels(channels)
+        return True
 
-		channels = channels[1]
+    def part(self, data):
 
+        channels = data.get("command", "")
 
-		self.connection.join_channels(channels)
-		return True
+        channels.lstrip()
+        channels.rstrip()
+        channels = channels.split()
+        if len(channels) < 2:
+            print(channels)
+            self.connection.part_channel(message.destination)
+        else:
+            channels = channels[1]
+            self.connection.part_channels(channels)
 
-	def part(self, data):
+        return True
 
-		dest = ""
-		message = data["message"]
+    def handle_call(self, message, **kwargs):
+        self.connection = kwargs.get("connection", None)
+        for command in self.commands:
+            data = command.is_called(message, self.connection)
+            if data is False:
+                continue
 
-		if message.destination == self.connection.config.nick:
-			dest = message.sender.nick
-		else:
-			dest = message.destination
+            return command.function(data)
+        return False
 
-		channels = data.get("command", "")
+    def __init__(self, **kwargs):
+        self.name = "irc_commands"
+        self.author = "Mischa-Alff"
+        self.description = "This plugin allows cee to execute \
+            certain IRC commands."
 
-		channels.lstrip()
-		channels.rstrip()
-		channels = channels.split()
-		if len(channels) < 2:
-			print(channels)
-			self.connection.part_channel(message.destination)
-		else:
-			channels = channels[1]
-			self.connection.part_channels(channels)
+        self.connection = kwargs.get("connection", None)
 
-		return True
+        self.commands = []
 
-	def handle_call(self, message, **kwargs):
-		self.connection = kwargs.get("connection", None)
-		for command in self.commands:
-			data = command.is_called(message, self.connection)
-			if data is False:
-				continue
+        self.commands.append(
+            Command(self.join, [r"%%nick%%"], ["join", "Join", "JOIN"])
+        )
+        self.commands.append(
+            Command(self.part, [r"%%nick%%"], ["part", "Part", "PART"])
+        )
 
-			return command.function(data)
-		return False
-
-
-
-	def __init__(self, **kwargs):
-		self.name = "irc_commands"
-		self.author = "Mischa-Alff"
-		self.description = "This plugin allows cee to execute certain IRC commands."
-
-		self.connection = kwargs.get("connection", None)
-
-		self.commands = []
-
-		self.commands.append(Command(self.join, [r"%%nick%%"], ["join","Join","JOIN"]))
-		self.commands.append(Command(self.part, [r"%%nick%%"], ["part","Part","PART"]))
-
-		#super(Plugin, self).__init__(**kwargs)
+        #super(Plugin, self).__init__(**kwargs)

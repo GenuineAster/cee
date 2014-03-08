@@ -21,41 +21,44 @@ import sys
 
 sys.dont_write_bytecode = True
 
-import string
 import time
-import json
-import subprocess
-import re
-from easyprocess import EasyProcess
 from threading import Thread
 from irc import *
 from plugins.BasePlugin import *
 from pluginmanager import *
 from configloader import *
 
+
 config_full = get_config("config/cee.conf")
+
 
 def run_irc_instance(config, plugin_manager):
 
+    IRC = IRCConnection(IRCConfig(config=config))
+    IRC.start()
 
-	IRC = IRCConnection(IRCConfig(config=config))
-	IRC.start()
+    while 1:
+        IRC.parse_buffer()
 
-	while 1:
-		IRC.parse_buffer()
+        for message in IRC.get_messages():
+            print("%s:\t<%s> %s" % (
+                message.destination,
+                message.sender.nick,
+                message.message
+            ))
 
-		for message in IRC.get_messages():
-			print("%s:\t<%s> %s" % (message.destination, message.sender.nick, message.message))
+            for plugin in plugin_manager.plugins:
+                try:
+                    if plugin.plugin_object.handle_call(
+                        message,
+                        plugin_manager=plugin_manager,
+                        connection=IRC
+                    ):
+                        break
+                except Exception as e:
+                    print(e)
 
-			for plugin in plugin_manager.plugins:
-				try:
-					if plugin.plugin_object.handle_call(message, plugin_manager=plugin_manager, connection=IRC):
-						break;
-				except Exception as e:
-					print(e)
-
-
-		time.sleep(0.001)
+        time.sleep(0.001)
 
 threads = []
 
@@ -64,6 +67,8 @@ plugin_manager.get_plugins()
 plugin_manager.load_plugins()
 
 for network_name in config_full["IRC"]:
-	irc_config = config_full["IRC"][network_name]
-	threads.append(Thread(target=run_irc_instance, args=[irc_config, plugin_manager]))
-	threads[-1].start()
+    irc_config = config_full["IRC"][network_name]
+    threads.append(
+        Thread(target=run_irc_instance, args=[irc_config, plugin_manager])
+    )
+    threads[-1].start()
