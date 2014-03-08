@@ -52,4 +52,4 @@
 
 using namespace std;
 
-#define RANGE(r) (std::begin(r), std::end(r))
+#define RANGE(r) std::begin(r), std::end(r)
