@@ -86,7 +86,7 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
             )
         )
         self.commands.append(
-            plugins.Baseplugin.Command(
+            plugins.BasePlugin.Command(
                 self.plugins, [r"%%nick%%"], ["plugins"]
             )
         )
