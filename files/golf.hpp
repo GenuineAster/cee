@@ -1,10 +1,10 @@
 #define ch char
 #define in int
 #define lo long
-#define ui8 uint8_t
-#define ui16 uint16_t
-#define ui32 uint32_t
-#define ui64 uint64_t
+#define u8 uint8_t
+#define u16 uint16_t
+#define u32 uint32_t
+#define u64 uint64_t
 #define i8 int8_t
 #define i16 int16_t
 #define i32 int32_t
@@ -18,3 +18,6 @@
 #define el else
 #define au auto
 #define sw switch
+#define cs case
+#define ot cout
+#define cst const
