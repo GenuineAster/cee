@@ -8,8 +8,16 @@ cee requires:
 - Kitchen
 - sandbox
 
-To run cee's programs in the sandbox, set the `sandbox` variable to `true` in `config/cee.conf` and build the sandbox with:
+As of now, cee only functions on Linux and UNIX-like operating systems.
 
+To run cee, simply type:
 ```bash
-$ ./build_supervisor.sh
+$ python2 run.py
 ```
+
+configuring
+==
+
+cee's configuration files can be found in `config/`. You can add mutliple IRC servers, multiple IRC channels.
+
+cee will not write its data to the configuration files, so any channels added prior to connection will be discarded upon exit.
