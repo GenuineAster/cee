@@ -1,6 +1,5 @@
 import os
 import sys
-import re
 from kitchen.text.converters import to_bytes
 import easyprocess
 import irc
@@ -126,7 +125,7 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
                 assembler_command_temp.appent("elf32")
 
         assembler_command_temp.append(filename)
-        assembler_command_temp.append("-o %s.o" % output)
+        assembler_command_temp.append("-o%s.o" % output)
         assembler_process_data = easyprocess.EasyProcess(
             assembler_command_temp
         ).call(timeout=30)
@@ -136,10 +135,6 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
 
         if assembler_output_raw:
             assembler_output = assembler_output_raw.split("\n")
-            assembler_output = filter(
-                lambda x: re.search(r"(error|warning):", x),
-                assembler_output
-            )
             for i in range(len(assembler_output)):
                 assembler_output[i] = assembler_output[i].split(" ", 1)[1]
 
@@ -294,6 +289,10 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
         output = "files/output/output"
         return self.snippet(output, ["nasm"], data)
 
+    def yasm(self, data):
+        output = "files/output/output"
+        return self.snippet(output, ["yasm"], data)
+
     def handle_call(self, message, **kwargs):
         self.connection = kwargs.get("connection", None)
         for command in self.commands:
@@ -316,5 +315,11 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
         self.commands.append(
             plugins.BasePlugin.Command(
                 self.nasm, ["nasm"], [""]
+            )
+        )
+
+        self.commands.append(
+            plugins.BasePlugin.Command(
+                self.yasm, ["yasm"], [""]
             )
         )
