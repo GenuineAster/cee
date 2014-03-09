@@ -26,6 +26,7 @@ from threading import Thread
 import irc
 import pluginmanager
 import configloader
+import traceback
 
 
 config_full = configloader.get_config("config/cee.conf")
@@ -56,6 +57,7 @@ def run_irc_instance(config, plugin_manager):
                         break
                 except Exception as e:
                     print(e)
+                    traceback.print_exc(file=sys.stdout)
 
         time.sleep(0.001)
 
