@@ -291,7 +291,15 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
 
     def yasm(self, data):
         output = "files/output/output"
-        return self.snippet(output, ["yasm"], data)
+        return self.snippet(output, ["yasm", "-pnasm"], data)
+
+    def tasm(self, data):
+        output = "files/output/output"
+        return self.snippet(output, ["yasm", "-ptasm"], data)
+
+    def gas(self, data):
+        output = "files/output/output"
+        return self.snippet(output, ["yasm", "-pgas"], data)
 
     def handle_call(self, message, **kwargs):
         self.connection = kwargs.get("connection", None)
@@ -321,5 +329,17 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
         self.commands.append(
             plugins.BasePlugin.Command(
                 self.yasm, ["yasm"], [""]
+            )
+        )
+
+        self.commands.append(
+            plugins.BasePlugin.Command(
+                self.tasm, ["tasm"], [""]
+            )
+        )
+
+        self.commands.append(
+            plugins.BasePlugin.Command(
+                self.gas, ["gas"], [""]
             )
         )
