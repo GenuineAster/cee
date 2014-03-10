@@ -18,7 +18,7 @@ class Command(object):
 
     def is_called(self, message, connection):
         prefix = self.find_prefix(message, connection)
-        if prefix is None:
+        if not prefix:
             return False
 
         command = message.message[len(prefix):]

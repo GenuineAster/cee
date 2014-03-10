@@ -27,7 +27,7 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
         self.connection = kwargs.get("connection", None)
         for command in self.commands:
             data = command.is_called(message, self.connection)
-            if data is False:
+            if not data:
                 continue
 
             return command.function(data)

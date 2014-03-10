@@ -196,9 +196,9 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
 
             print(program_output_data.get("result", False))
 
-            if program_output_data.get("result", False) is "TL":
+            if program_output_data.get("result", False) == "TL":
                 message_string = "<killed> ( timed out )"
-            elif program_output_data.get("result", False) is "RF":
+            elif program_output_data.get("result", False) == "RF":
                 message_string = "<killed> ( restricted function used )"
             else:
                 if program_output[0]:
@@ -278,7 +278,7 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
         self.connection = kwargs.get("connection", None)
         for command in self.commands:
             data = command.is_called(message, self.connection)
-            if data is False:
+            if not data:
                 continue
 
             return command.function(data)

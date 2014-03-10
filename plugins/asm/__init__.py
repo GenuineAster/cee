@@ -4,7 +4,7 @@ from kitchen.text.converters import to_bytes
 import easyprocess
 import irc
 import plugins.BasePlugin
-import utils.Compile
+from utils.Compile import CompilerException
 import sandbox
 import platform
 
@@ -138,7 +138,7 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
             for i in range(len(assembler_output)):
                 assembler_output[i] = assembler_output[i].split(" ", 1)[1]
 
-            raise utils.Compile.CompilerException(
+            raise CompilerException(
                 "Assembler error: " + assembler_output[0]
             )
 
@@ -165,7 +165,7 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
 
         if linker_output_raw:
             linker_output = linker_output_raw.split("\n")
-            raise utils.Compile.CompilerException(
+            raise CompilerException(
                 "Linker error:" + linker_output[0]
             )
             return False
@@ -218,9 +218,9 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
 
             print(program_output_data.get("result", False))
 
-            if program_output_data.get("result", False) is "TL":
+            if program_output_data.get("result", False) == "TL":
                 message_string = "<killed> ( timed out )"
-            elif program_output_data.get("result", False) is "RF":
+            elif program_output_data.get("result", False) == "RF":
                 message_string = "<killed> ( restricted function used )"
             else:
                 if program_output[0]:
@@ -274,7 +274,7 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
             )
             self.link(data, output)
 
-        except utils.Compile.CompilerException as e:
+        except CompilerException as e:
             self.connection.send_message(
                 irc.IRCPrivateMessage(dest, e.error)
             )
@@ -305,7 +305,7 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
         self.connection = kwargs.get("connection", None)
         for command in self.commands:
             data = command.is_called(message, self.connection)
-            if data is False:
+            if not data:
                 continue
 
             return command.function(data)
