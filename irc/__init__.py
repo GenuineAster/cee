@@ -98,7 +98,9 @@ class IRCConnection(object):
     messages = None
     ready = None
     socket_recieve_thread = None
+    socket_send_thread = None
     channel_thread = None
+    send_queue = None
 
     def join_channel(self, channel):
         self.channels[channel] = IRCChannel(channel)
@@ -170,7 +172,7 @@ class IRCConnection(object):
             return
         self.sock.connect((self.config.host, self.config.port))
 
-    def socket_read(self):
+    def socket_read_loop(self):
         while 1:
             try:
                 self.readbuffer += self.sock.recv(1024)
@@ -181,6 +183,20 @@ class IRCConnection(object):
                 for line in temp:
                     self.readlines.append(line)
                 self.readbuffer = self.readlines.pop()
+            time.sleep(0.1)
+
+    def socket_send_loop(self):
+        while 1:
+            try:
+                if self.send_queue:
+                    msg_list = self.send_queue[:]
+                    for msg in msg_list:
+                        self.socket_send(msg_list[0])
+                        self.send_queue.pop(0)
+                        time.sleep(4)
+            except Exception as e:
+                print("Couldn't send data to server..?")
+                print("Exception was: %s" % e)
             time.sleep(0.1)
 
     def socket_send(self, data):
@@ -198,11 +214,14 @@ class IRCConnection(object):
             self.config.realname
         ))
 
-        socket_recieve_thread = Thread(target=self.socket_read)
+        socket_recieve_thread = Thread(target=self.socket_read_loop)
         socket_recieve_thread.start()
+        socket_send_thread = Thread(target=self.socket_send_loop)
+        socket_send_thread.start()
 
         channel_thread = Thread(target=self.process_channels)
         channel_thread.start()
+        self.time = time.time()
 
     def get_messages(self):
         messages = self.messages[:]
@@ -210,7 +229,7 @@ class IRCConnection(object):
         return messages
 
     def send_message(self, message):
-        self.socket_send("PRIVMSG %s :%s" % (
+        self.send_queue.append("PRIVMSG %s :%s" % (
             message.destination,
             message.message
         ))
@@ -223,3 +242,5 @@ class IRCConnection(object):
         self.readbuffer = ""
         self.messages = []
         self.ready = False
+        self.send_queue = []
+        self.time = time.time()
