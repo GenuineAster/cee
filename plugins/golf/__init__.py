@@ -201,7 +201,11 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
             if program_output_data.get("result", False) == "TL":
                 message_string = "<killed> ( timed out )"
             elif program_output_data.get("result", False) == "RF":
-                message_string = "<killed> ( restricted function used )"
+                message_string = \
+                    "<killed> ( restricted function used: %d(%d) )" % (
+                        program_output_data.get("syscall_info")[0],
+                        program_output_data.get("syscall_info")[1]
+                    )
             else:
                 if program_output[0]:
 

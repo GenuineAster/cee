@@ -69,7 +69,7 @@ def run_irc_instance(config, plugin_manager):
         temp_command_queue = command_queue[:]
 
         for i, command in enumerate(temp_command_queue):
-            if len(command_threads) < config.get("max_concurrent_commands", 1):  # noqa
+            if len(command_threads) < config_full.get("max_concurrent_commands", 1):  # noqa
                 command_threads.append(
                     Thread(
                         target=run_command,
