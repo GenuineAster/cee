@@ -80,7 +80,8 @@ def run_irc_instance(config, plugin_manager):
                 )
                 command_threads[-1].start()
                 try:
-                    command_queue.pop(i)
+                    if len(command_queue) > i:
+                        command_queue.pop(i)
                 except Exception as e:
                     print(e)
 

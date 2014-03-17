@@ -225,6 +225,8 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
                         program_output_data.get("syscall_info")[0],
                         program_output_data.get("syscall_info")[1]
                     )
+            elif program_output_data.get("result", False) == "ML":
+                message_string = "<killed> ( memory limit exceeded )"
             else:
                 if program_output[0]:
 
