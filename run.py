@@ -32,10 +32,27 @@ import traceback
 config_full = configloader.get_config("config/cee.conf")
 
 
+def run_command(message, plugin_manager, IRC):
+    for plugin in plugin_manager.plugins:
+        try:
+            if plugin.plugin_object.handle_call(
+                message,
+                plugin_manager=plugin_manager,
+                connection=IRC
+            ):
+                break
+        except Exception as e:
+            print(e)
+            traceback.print_exc(file=sys.stdout)
+
+
 def run_irc_instance(config, plugin_manager):
 
     IRC = irc.IRCConnection(irc.IRCConfig(config=config))
     IRC.start()
+
+    command_threads = []
+    command_queue = []
 
     while 1:
         IRC.parse_buffer()
@@ -47,19 +64,28 @@ def run_irc_instance(config, plugin_manager):
                 message.message
             ))
 
-            for plugin in plugin_manager.plugins:
-                try:
-                    if plugin.plugin_object.handle_call(
-                        message,
-                        plugin_manager=plugin_manager,
-                        connection=IRC
-                    ):
-                        break
-                except Exception as e:
-                    print(e)
-                    traceback.print_exc(file=sys.stdout)
+            command_queue.append(message)
 
-        time.sleep(0.001)
+        temp_command_queue = command_queue[:]
+
+        for i, command in enumerate(temp_command_queue):
+            if len(command_threads) < config.get("max_concurrent_commands", 1):  # noqa
+                command_threads.append(
+                    Thread(
+                        target=run_command,
+                        args=[
+                            command, plugin_manager, IRC
+                        ]
+                    )
+                )
+                command_threads[-1].start()
+                command_queue.pop(i)
+
+        for i, thread in enumerate(command_threads):
+            if not thread.isAlive():
+                command_threads.pop(i)
+
+        time.sleep(0.01)
 
 threads = []
 
