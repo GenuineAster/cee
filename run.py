@@ -79,7 +79,10 @@ def run_irc_instance(config, plugin_manager):
                     )
                 )
                 command_threads[-1].start()
-                command_queue.pop(i)
+                try:
+                    command_queue.pop(i)
+                except Exception as e:
+                    print(e)
 
         for i, thread in enumerate(command_threads):
             if not thread.isAlive():
