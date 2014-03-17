@@ -201,7 +201,7 @@ class CompilerPlugin(plugins.BasePlugin.BasePlugin, object):
     def handle_call(self, message, **kwargs):
         self.connection = kwargs.get("connection", None)
         for command in self.commands:
-            data = command.is_called(message, self.connection)
+            data = command.is_called(message, **kwargs)
             if not data:
                 continue
 

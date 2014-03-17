@@ -36,7 +36,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.curly_brace_snippet, ["golf"], ["{"],
+                self.curly_brace_snippet, ["%%prefix%%golf"], ["{"],
                 {
                     "prefix_files": ["files/template.cpp", "files/golf.hpp"],
                     "suffix_files": [],
@@ -46,7 +46,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
         )
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.stream_snippet, ["golf"], ["<<"],
+                self.stream_snippet, ["%%prefix%%golf"], ["<<"],
                 {
                     "prefix_files": ["files/template.cpp", "files/golf.hpp"],
                     "suffix_files": [],
@@ -56,7 +56,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
         )
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.snippet, ["golf"], [""],
+                self.snippet, ["%%prefix%%golf"], [""],
                 {
                     "prefix_files": ["files/template.cpp", "files/golf.hpp"],
                     "suffix_files": [],

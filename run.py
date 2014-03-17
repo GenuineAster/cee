@@ -38,7 +38,8 @@ def run_command(message, plugin_manager, IRC):
             if plugin.plugin_object.handle_call(
                 message,
                 plugin_manager=plugin_manager,
-                connection=IRC
+                connection=IRC,
+                command_prefix=config_full.get("command_prefix", "")
             ):
                 break
         except Exception as e:

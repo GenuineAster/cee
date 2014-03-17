@@ -8,17 +8,28 @@ class Command(object):
     function = None
     extra_args = None
 
-    def find_prefix(self, message, connection):
+    def find_prefix(self, message, **kwargs):
         for prefix in self.prefixes:
-            findstring = re.sub("%%nick%%", connection.config.nick, prefix)
+            findstring = prefix[:]
+            findstring = re.sub(
+                "%%nick%%",
+                kwargs.get("connection", None).config.nick,
+                findstring
+            )
+            findstring = re.sub(
+                "%%prefix%%",
+                kwargs.get("command_prefix", ""),
+                findstring
+            )
+
             findstring = to_bytes(findstring)
             msg = to_bytes(message.message)
             if msg.startswith(findstring):
                 return findstring
         return None
 
-    def is_called(self, message, connection):
-        prefix = self.find_prefix(message, connection)
+    def is_called(self, message, **kwargs):
+        prefix = self.find_prefix(message, **kwargs)
         if not prefix:
             return False
 
@@ -35,7 +46,7 @@ class Command(object):
                     "prefix": prefix,
                     "word": word,
                     "command": command,
-                    "connection": connection,
+                    "connection": kwargs.get("connection", None),
                     "message": message
                 }
 

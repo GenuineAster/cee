@@ -35,7 +35,7 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
     def handle_call(self, message, **kwargs):
         self.connection = kwargs.get("connection", None)
         for command in self.commands:
-            data = command.is_called(message, self.connection)
+            data = command.is_called(message, **kwargs)
             if not data:
                 continue
             data["plugin_manager"] = kwargs.get("plugin_manager", None)
@@ -53,6 +53,6 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.reload, [r"%%nick%%"], ["reload"]
+                self.reload, ["%%nick%%"], ["reload"]
             )
         )

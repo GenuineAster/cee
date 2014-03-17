@@ -37,7 +37,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.curly_brace_snippet, ["clang"], ["{"],
+                self.curly_brace_snippet, ["%%prefix%%clang"], ["{"],
                 {
                     "prefix_files": ["files/template.cpp"],
                     "suffix_files": [],
@@ -47,7 +47,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
         )
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.stream_snippet, ["clang"], ["<<"],
+                self.stream_snippet, ["%%prefix%%clang"], ["<<"],
                 {
                     "prefix_files": ["files/template.cpp"],
                     "suffix_files": [],
@@ -57,7 +57,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
         )
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.snippet, ["clang"], [""],
+                self.snippet, ["%%prefix%%clang"], [""],
                 {
                     "prefix_files": ["files/template.cpp"],
                     "suffix_files": [],
