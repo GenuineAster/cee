@@ -6,6 +6,7 @@ class Command(object):
     prefixes = None
     words = None
     function = None
+    extra_args = None
 
     def find_prefix(self, message, connection):
         for prefix in self.prefixes:
@@ -40,10 +41,11 @@ class Command(object):
 
         return False
 
-    def __init__(self, func, prefixes, words):
+    def __init__(self, func, prefixes, words, extra_args={}):
         self.function = func
         self.prefixes = prefixes
         self.words = words
+        self.extra_args = extra_args
 
 
 class BasePlugin(object):
