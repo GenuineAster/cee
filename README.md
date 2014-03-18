@@ -3,6 +3,23 @@ cee
 
 cee is a C++ evaluating IRC bot written in Python.
 
+cee has greatly evolved as a project, and now supports many languages, such as:
+- C++
+ - GCC
+ - Clang
+ - Golf plugin
+- Assembly:
+ - NASM
+ - TASM
+ - GAS
+- Lua
+- Malbolge
+- PHP
+- Python
+ - Python 2
+ - Python 3
+
+
 cee requires:
 - EasyProcess
 - Kitchen
