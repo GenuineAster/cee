@@ -18,6 +18,7 @@ cee has greatly evolved as a project, and now supports many languages, such as:
 - Python
  - Python 2
  - Python 3
+- JavaScript
 
 
 cee requires:
