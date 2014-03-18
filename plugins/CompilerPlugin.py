@@ -17,13 +17,14 @@ class CompilerPlugin(plugins.BasePlugin.BasePlugin, object):
     description = None
     connection = None
     compiler_command = None
+    out_flag = None
 
     def compile_code(self, filename, output):
         compiler_output_raw = ""
         compiler_output = []
         compiler_command_temp = self.compiler_command[:]
         compiler_command_temp.append(filename)
-        compiler_command_temp.append("-o%s" % output)
+        compiler_command_temp.append("%s%s" % (self.out_flag, output))
         compiler_process_data = easyprocess.EasyProcess(
             compiler_command_temp
         ).call(timeout=30)
@@ -33,9 +34,10 @@ class CompilerPlugin(plugins.BasePlugin.BasePlugin, object):
         )
 
         if compiler_output_raw:
+            print(compiler_output_raw)
             compiler_output = compiler_output_raw.split("\n")
             compiler_output = filter(
-                lambda x: re.search(r"(error|warning):", x),
+                lambda x: re.search(r"(error|warning)", x),
                 compiler_output
             )
             for i in range(len(compiler_output)):
@@ -58,10 +60,13 @@ class CompilerPlugin(plugins.BasePlugin.BasePlugin, object):
             "w+"
         )
 
+        args = []
+        if self.run_cmd:
+            args.append(self.run_cmd)
+        args.append(os.path.join(os.getcwd(), filename))
+
         cookbook = {
-            'args': [
-                os.path.join(os.getcwd(), filename)
-            ],
+            'args': args,
             'stdin': sys.stdin,
             'stdout': output,
             'stderr': output,
@@ -211,3 +216,5 @@ class CompilerPlugin(plugins.BasePlugin.BasePlugin, object):
     def __init__(self, **kwargs):
         self.connection = kwargs.get("connection", None)
         self.commands = []
+        self.out_flag = "-o"
+        self.run_cmd = None
