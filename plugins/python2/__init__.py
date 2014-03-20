@@ -8,6 +8,10 @@ class Plugin(plugins.InterpreterPlugin.InterpreterPlugin, object):
     description = None
     connection = None
 
+    def py_snippet(self, data, extra_args):
+        data["command"] = data["command"].replace(";;", "\n")
+        return self.snippet(data, extra_args)
+
     def __init__(self, **kwargs):
         self.name = "python"
         self.author = "Mischa-Alff"
@@ -19,7 +23,7 @@ class Plugin(plugins.InterpreterPlugin.InterpreterPlugin, object):
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.snippet, ["%%prefix%%python2"], [""],
+                self.py_snippet, ["%%prefix%%python2"], [""],
                 {
                     "lang_extension": "py"
                 }
@@ -28,7 +32,7 @@ class Plugin(plugins.InterpreterPlugin.InterpreterPlugin, object):
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.snippet, ["%%prefix%%py2"], [""],
+                self.py_snippet, ["%%prefix%%py2"], [""],
                 {
                     "lang_extension": "py"
                 }
