@@ -16,12 +16,10 @@ class Plugin(plugins.InterpreterPlugin.InterpreterPlugin, object):
         found = [False, False]
         for line in program_output:
             if "traceback" in line.lower():
-                print("found!")
                 found = [True, program_output.index(line)]
-                print found
+                break
 
         if found[0]:
-            print("penis")
             found[1] += 1
             while found[1] < len(program_output):
                 if program_output[found[1]][0] != " ":
