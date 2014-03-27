@@ -16,9 +16,65 @@ class InterpreterPlugin(plugins.BasePlugin.BasePlugin, object):
     connection = None
     interpreter_command = None
 
+    def strip_output(self, message_string, program_output):
+        if len(program_output) > 1:
+            message_string = to_bytes(
+                message_string +
+                " [+%d deleted lines]" % (len(program_output) - 1)
+            )
+
+        max_msg_len = 400 - len("[+nnn deleted bytes]")
+        if len(message_string) > max_msg_len:
+            message_string = (
+                message_string[:max_msg_len] +
+                (
+                    "[+%d deleted bytes]" %
+                    (len(message_string) - max_msg_len)
+                )
+            )
+        return message_string
+
+    def parse_output(self, message_string, program_output):
+        message_string = self.strip_output(message_string, program_output)
+
+        return message_string
+
+    def handle_output(self, program_output_raw, program_output_data):
+        message_string = ""
+
+        temp = program_output_raw.replace("\r", "")
+        program_output = temp.split("\n")
+        message_string = program_output[0]
+        message_string.rstrip()
+
+        message_string = to_bytes(message_string)
+
+        print(program_output_data.get("result", False))
+
+        if program_output_data.get("result", False) == "TL":
+            message_string = "<killed> ( timed out )"
+        elif program_output_data.get("result", False) == "RF":
+            message_string = \
+                "<killed> ( restricted function used: %d(%d) )" % (
+                    program_output_data.get("syscall_info")[0],
+                    program_output_data.get("syscall_info")[1]
+                )
+        elif program_output_data.get("result", False) == "ML":
+            message_string = "<killed> ( memory limit exceeded )"
+        else:
+            if program_output[0]:
+                message_string = self.parse_output(
+                    message_string, program_output
+                )
+            else:
+                message_string = "<no output> ( return value was %d ) " % (
+                    program_output_data.get("exitcode", -1)
+                )
+
+        return message_string
+
     def run(self, filename):
         program_output_raw = ""
-        message_string = ""
 
         output = open(
             "files/output/cee_output_%s" %
@@ -63,50 +119,7 @@ class InterpreterPlugin(plugins.BasePlugin.BasePlugin, object):
 
             program_output_raw = output.read()
 
-            temp = program_output_raw.replace("\r", "")
-            program_output = temp.split("\n")
-            message_string = program_output[0]
-            message_string.rstrip()
-
-            message_string = to_bytes(message_string)
-
-            print(program_output_data.get("result", False))
-
-            if program_output_data.get("result", False) == "TL":
-                message_string = "<killed> ( timed out )"
-            elif program_output_data.get("result", False) == "RF":
-                message_string = \
-                    "<killed> ( restricted function used: %d(%d) )" % (
-                        program_output_data.get("syscall_info")[0],
-                        program_output_data.get("syscall_info")[1]
-                    )
-            elif program_output_data.get("result", False) == "ML":
-                message_string = "<killed> ( memory limit exceeded )"
-            else:
-                if program_output[0]:
-
-                    if len(program_output) > 1:
-                        message_string = to_bytes(
-                            message_string +
-                            " [+%d deleted lines]" % (len(program_output) - 1)
-                        )
-
-                    max_msg_len = 400 - len("[+nnn deleted bytes]")
-                    if len(message_string) > max_msg_len:
-                        message_string = (
-                            message_string[:max_msg_len] +
-                            (
-                                "[+%d deleted bytes]" %
-                                (len(message_string) - max_msg_len)
-                            )
-                        )
-
-                else:
-                    message_string = "<no output> ( return value was %d ) " % (
-                        program_output_data.get("exitcode", -1)
-                    )
-
-            return message_string
+            return self.handle_output(program_output_raw, program_output_data)
 
     def snippet(self, data, extra_args):
         message = data["message"]
