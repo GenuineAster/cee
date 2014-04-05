@@ -40,7 +40,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
                 {
                     "prefix_files": ["files/template.cpp", "files/golf.hpp"],
                     "suffix_files": [],
-                    "lang_extension": "cpp"
+                    "lang_extension": "golf.cpp"
                 }
             )
         )
@@ -50,7 +50,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
                 {
                     "prefix_files": ["files/template.cpp", "files/golf.hpp"],
                     "suffix_files": [],
-                    "lang_extension": "cpp"
+                    "lang_extension": "golf.cpp"
                 }
             )
         )
@@ -60,7 +60,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
                 {
                     "prefix_files": ["files/template.cpp", "files/golf.hpp"],
                     "suffix_files": [],
-                    "lang_extension": "cpp"
+                    "lang_extension": "golf.cpp"
                 }
             )
         )

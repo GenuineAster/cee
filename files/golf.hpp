@@ -21,3 +21,5 @@
 #define cs case
 #define ot cout
 #define cst const
+#define br break
+#define itr iterator
