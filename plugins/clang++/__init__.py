@@ -25,7 +25,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
         self.compiler_command = [
             "clang++",
             "-Wall",
-            "-std=c++11",
+            "-std=c++1y",
             "-fmessage-length=0",
             "-ftemplate-depth-128",
             "-fno-elide-constructors",

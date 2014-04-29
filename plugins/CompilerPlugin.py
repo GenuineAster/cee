@@ -23,8 +23,11 @@ class CompilerPlugin(plugins.BasePlugin.BasePlugin, object):
         compiler_output_raw = ""
         compiler_output = []
         compiler_command_temp = self.compiler_command[:]
-        compiler_command_temp.append(filename)
         compiler_command_temp.append("%s%s" % (self.out_flag, output))
+        compiler_command_temp.append(filename)
+        if "clang++" in compiler_command_temp:
+            compiler_command_temp.append("-stdlib=libc++")
+            compiler_command_temp.append("-lc++abi")
         compiler_process_data = easyprocess.EasyProcess(
             compiler_command_temp
         ).call(timeout=30)
