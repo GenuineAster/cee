@@ -10,44 +10,43 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
     connection = None
 
     def curly_brace_snippet(self, data, extra_args):
-        data["command"] = "int main()\n" + data["command"]
+        data["command"] = "int main()" + data["command"]
+        print data
         return self.snippet(data, extra_args)
 
     def stream_snippet(self, data, extra_args):
         data["command"] = "{ cout " + data["command"] + "; }"
+        print data
         return self.curly_brace_snippet(data, extra_args)
 
     def __init__(self, **kwargs):
-        self.name = "g++"
+        self.name = "clang"
         self.author = "Mischa-Alff"
-        self.description = "A C++ evaluation plugin using g++."
+        self.description = "A C++ evaluation plugin using clang++ and SFML"
 
         self.compiler_command = [
-            "g++",
+            "clang++",
             "-Wall",
-            "-std=c++11",
-            "-finput-charset=UTF-8",
-            "-fno-use-linker-plugin",
+            "-std=c++1y",
             "-fmessage-length=0",
             "-ftemplate-depth-128",
-            "-fno-merge-constants",
-            "-fno-nonansi-builtins",
-            "-fno-gnu-keywords",
             "-fno-elide-constructors",
             "-fstrict-aliasing",
             "-fstack-protector-all",
-            "-trigraphs",
-            "-Wno-trigraphs"
+            "-lsfml-graphics",
+            "-lsfml-audio",
+            "-lsfml-network",
+            "-lsfml-window",
+            "-lsfml-system"
         ]
 
         super(Plugin, self).__init__(**kwargs)
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.curly_brace_snippet, ["%%nick%%", "%%prefix%%g++", ""],
-                ["{"],
+                self.curly_brace_snippet, ["%%prefix%%sfml"], ["{"],
                 {
-                    "prefix_files": ["files/template.cpp"],
+                    "prefix_files": ["files/template.cpp", "files/sfml.hpp"],
                     "suffix_files": [],
                     "lang_extension": "cpp"
                 }
@@ -55,9 +54,9 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
         )
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.stream_snippet, ["%%nick%%", "%%prefix%%g++", ""], ["<<"],
+                self.stream_snippet, ["%%prefix%%sfml"], ["<<"],
                 {
-                    "prefix_files": ["files/template.cpp"],
+                    "prefix_files": ["files/template.cpp", "files/sfml.hpp"],
                     "suffix_files": [],
                     "lang_extension": "cpp"
                 }
@@ -65,9 +64,9 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
         )
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.snippet, ["%%prefix%%g++"], [""],
+                self.snippet, ["%%prefix%%sfml"], [""],
                 {
-                    "prefix_files": ["files/template.cpp"],
+                    "prefix_files": ["files/template.cpp", "files/sfml.hpp"],
                     "suffix_files": [],
                     "lang_extension": "cpp"
                 }

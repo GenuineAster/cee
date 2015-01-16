@@ -10,11 +10,13 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
     connection = None
 
     def curly_brace_snippet(self, data, extra_args):
-        data["command"] = "int main()\n" + data["command"]
+        data["command"] = "int main()" + data["command"]
+        print data
         return self.snippet(data, extra_args)
 
     def stream_snippet(self, data, extra_args):
         data["command"] = "{ cout " + data["command"] + "; }"
+        print data
         return self.curly_brace_snippet(data, extra_args)
 
     def __init__(self, **kwargs):
@@ -24,13 +26,14 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
 
         self.compiler_command = [
             "clang++",
-            "-Wall",
+#            "-Wall",
             "-std=c++1y",
-            "-fmessage-length=0",
-            "-ftemplate-depth-128",
-            "-fno-elide-constructors",
-            "-fstrict-aliasing",
-            "-fstack-protector-all"
+            "-trigraphs"
+#            "-fmessage-length=0",
+#            "-ftemplate-depth-128",
+#            "-fno-elide-constructors",
+#            "-fstrict-aliasing",
+#            "-fstack-protector-all"
         ]
 
         super(Plugin, self).__init__(**kwargs)

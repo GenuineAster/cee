@@ -25,9 +25,9 @@ class CompilerPlugin(plugins.BasePlugin.BasePlugin, object):
         compiler_command_temp = self.compiler_command[:]
         compiler_command_temp.append("%s%s" % (self.out_flag, output))
         compiler_command_temp.append(filename)
-        if "clang++" in compiler_command_temp:
-            compiler_command_temp.append("-stdlib=libc++")
-            compiler_command_temp.append("-lc++abi")
+#        if "clang++" in compiler_command_temp:
+#            compiler_command_temp.append("-stdlib=libc++")
+#            compiler_command_temp.append("-lc++abi")
         compiler_process_data = easyprocess.EasyProcess(
             compiler_command_temp
         ).call(timeout=30)
@@ -35,6 +35,7 @@ class CompilerPlugin(plugins.BasePlugin.BasePlugin, object):
             compiler_process_data.stdout +
             compiler_process_data.stderr
         )
+        print compiler_output_raw
 
         if compiler_output_raw:
             print(compiler_output_raw)
@@ -74,9 +75,9 @@ class CompilerPlugin(plugins.BasePlugin.BasePlugin, object):
             'stdout': output,
             'stderr': output,
             'quota': dict(
-                wallclock=10000,
-                cpu=5000,
-                memory=100000000,
+                wallclock=100000,
+                cpu=50000,
+                memory=500000000,
                 disk=1048576
             )
         }
@@ -109,6 +110,7 @@ class CompilerPlugin(plugins.BasePlugin.BasePlugin, object):
             message_string.rstrip()
 
             message_string = to_bytes(message_string)
+            print message_string
 
             print(program_output_data.get("result", False))
 

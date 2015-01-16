@@ -13,7 +13,8 @@ class Plugin(plugins.InterpreterPlugin.InterpreterPlugin, object):
         self.author = "Mischa-Alff"
         self.description = "A JavaScript evaluation plugin."
 
-        self.interpreter_command = ["/usr/bin/spidermonkey-1.7", "-f"]
+#        self.interpreter_command = ["/usr/bin/spidermonkey-1.7", "-f"]
+        self.interpreter_command = ["/usr/bin/js24", "-f"]
 
         super(Plugin, self).__init__(**kwargs)
 
