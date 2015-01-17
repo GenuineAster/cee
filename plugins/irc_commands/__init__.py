@@ -10,29 +10,23 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
     connection = None
 
     def join(self, data):
-
         channels = data.get("command", "")
-
         channels.lstrip()
         channels.rstrip()
         channels = channels.split()
-        if len(channels) < 2:
+        if len(channels) < 1:
             return True
-
-        channels = channels[1]
-
-        self.connection.join_channels(channels)
+        self.connection.join_channels(','.join(channels))
         return True
 
     def part(self, data):
 
         message = data["message"]
         channels = data.get("command", "")
-
         channels.lstrip()
         channels.rstrip()
         channels = channels.split()
-        if len(channels) < 2:
+        if len(channels) < 1:
             print(channels)
             self.connection.part_channel(message.destination)
         else:

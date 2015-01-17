@@ -40,7 +40,7 @@ class Plugin(plugins.InterpreterPlugin.InterpreterPlugin, object):
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.py_snippet, ["%%prefix%%python"], [""],
+                self.py_snippet, ["%%prefix%%"], ["python3"],
                 {
                     "lang_extension": "py"
                 }
@@ -49,7 +49,7 @@ class Plugin(plugins.InterpreterPlugin.InterpreterPlugin, object):
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.py_snippet, ["%%prefix%%py"], [""],
+                self.py_snippet, ["%%prefix%%"], ["py3"],
                 {
                     "lang_extension": "py"
                 }

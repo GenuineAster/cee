@@ -138,24 +138,24 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.nasm, ["%%prefix%%nasm"], [""]
+                self.nasm, ["%%prefix%%"], ["nasm"]
             )
         )
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.yasm, ["%%prefix%%yasm"], [""]
+                self.yasm, ["%%prefix%%"], ["yasm"]
             )
         )
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.tasm, ["%%prefix%%tasm"], [""]
+                self.tasm, ["%%prefix%%"], ["tasm"]
             )
         )
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.gas, ["%%prefix%%gas"], [""]
+                self.gas, ["%%prefix%%"], ["gas"]
             )
         )

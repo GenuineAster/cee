@@ -10,11 +10,11 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
     connection = None
 
     def curly_brace_snippet(self, data, extra_args):
-        data["command"] = "int main()\n" + data["command"]
+        data["command"] = "int main()\n{" + data["command"]
         return self.snippet(data, extra_args)
 
     def stream_snippet(self, data, extra_args):
-        data["command"] = "{ cout " + data["command"] + "; }"
+        data["command"] = " cout << " + data["command"] + "; }"
         return self.curly_brace_snippet(data, extra_args)
 
     def __init__(self, **kwargs):
@@ -44,8 +44,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.curly_brace_snippet, ["%%nick%%", "%%prefix%%g++", ""],
-                ["{"],
+                self.curly_brace_snippet, ["%%nick%%", ''], ["{"],
                 {
                     "prefix_files": ["files/template.cpp"],
                     "suffix_files": [],
@@ -54,8 +53,18 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
             )
         )
         self.commands.append(
+            plugins.BasePlugin.Command(                           
+                self.curly_brace_snippet, ["%%prefix%%"], ["g++ {", "g++{"],
+                {                                                 
+                    "prefix_files": ["files/template.cpp"],       
+                    "suffix_files": [],                           
+                    "lang_extension": "cpp"                       
+                }                                                 
+            )                                                     
+        )
+        self.commands.append(
             plugins.BasePlugin.Command(
-                self.stream_snippet, ["%%nick%%", "%%prefix%%g++", ""], ["<<"],
+                self.stream_snippet, ["%%nick%%", ''], ["<<"],
                 {
                     "prefix_files": ["files/template.cpp"],
                     "suffix_files": [],
@@ -63,9 +72,19 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
                 }
             )
         )
+        self.commands.append(                                 
+            plugins.BasePlugin.Command(                       
+                self.stream_snippet, ["%%prefix%%"], ["g++<<", "g++ <<"],
+                {                                             
+                    "prefix_files": ["files/template.cpp"],   
+                    "suffix_files": [],                       
+                    "lang_extension": "cpp"                   
+                }                                             
+            )                                                 
+        )                                                     
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.snippet, ["%%prefix%%g++"], [""],
+                self.snippet, ["%%prefix%%"], ["g++"],
                 {
                     "prefix_files": ["files/template.cpp"],
                     "suffix_files": [],

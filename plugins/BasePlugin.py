@@ -45,7 +45,8 @@ class Command(object):
                 return {
                     "prefix": prefix,
                     "word": word,
-                    "command": command,
+                    "full_command": command,
+                    "command": command[len(word):].lstrip().rstrip(),
                     "connection": kwargs.get("connection", None),
                     "message": message
                 }

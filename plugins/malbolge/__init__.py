@@ -19,7 +19,7 @@ class Plugin(plugins.InterpreterPlugin.InterpreterPlugin, object):
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.snippet, ["%%prefix%%malbolge"], [""],
+                self.snippet, ["%%prefix%%"], ["malbolge"],
                 {
                     "lang_extension": "mbs"
                 }
@@ -28,7 +28,7 @@ class Plugin(plugins.InterpreterPlugin.InterpreterPlugin, object):
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.snippet, ["%%prefix%%mbs"], [""],
+                self.snippet, ["%%prefix%%"], ["mbs"],
                 {
                     "lang_extension": "mbs"
                 }

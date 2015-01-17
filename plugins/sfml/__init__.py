@@ -10,12 +10,12 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
     connection = None
 
     def curly_brace_snippet(self, data, extra_args):
-        data["command"] = "int main()" + data["command"]
+        data["command"] = "int main()\n{" + data["command"]
         print data
         return self.snippet(data, extra_args)
 
     def stream_snippet(self, data, extra_args):
-        data["command"] = "{ cout " + data["command"] + "; }"
+        data["command"] = " cout <<" + data["command"] + "; }"
         print data
         return self.curly_brace_snippet(data, extra_args)
 
@@ -44,7 +44,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.curly_brace_snippet, ["%%prefix%%sfml"], ["{"],
+                self.curly_brace_snippet, ["%%prefix%%"], ["sfml {", "sfml{"],
                 {
                     "prefix_files": ["files/template.cpp", "files/sfml.hpp"],
                     "suffix_files": [],
@@ -54,7 +54,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
         )
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.stream_snippet, ["%%prefix%%sfml"], ["<<"],
+                self.stream_snippet, ["%%prefix%%"], ["sfml<<", "sfml <<"],
                 {
                     "prefix_files": ["files/template.cpp", "files/sfml.hpp"],
                     "suffix_files": [],
@@ -64,7 +64,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
         )
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.snippet, ["%%prefix%%sfml"], [""],
+                self.snippet, ["%%prefix%%"], ["sfml"],
                 {
                     "prefix_files": ["files/template.cpp", "files/sfml.hpp"],
                     "suffix_files": [],

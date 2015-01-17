@@ -19,7 +19,7 @@ class Plugin(plugins.InterpreterPlugin.InterpreterPlugin, object):
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.snippet, ["%%prefix%%lua"], [""],
+                self.snippet, ["%%prefix%%"], ["lua"],
                 {
                     "lang_extension": "lua"
                 }

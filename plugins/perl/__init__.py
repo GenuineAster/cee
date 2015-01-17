@@ -19,7 +19,7 @@ class Plugin(plugins.InterpreterPlugin.InterpreterPlugin, object):
 
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.snippet, ["%%prefix%%pl"], [""],
+                self.snippet, ["%%prefix%%"], ["pl"],
                 {
                     "lang_extension": "pl"
                 }
@@ -27,7 +27,7 @@ class Plugin(plugins.InterpreterPlugin.InterpreterPlugin, object):
         )
         self.commands.append(
             plugins.BasePlugin.Command(
-                self.snippet, ["%%prefix%%perl"], [""],
+                self.snippet, ["%%prefix%%"], ["perl"],
                 {
                     "lang_extension": "pl"
                 }
