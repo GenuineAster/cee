@@ -1,6 +1,8 @@
+import os
 import time
 import irc
 import plugins.BasePlugin
+import cPickle
 
 class Factoid:
     name = None
@@ -107,6 +109,7 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
                 dest,
                 "%s: factoid added: %s: %s." % (message.sender.nick, fact.name, fact.factoid)
             )
+            cPickle.dump(self.factoids, open('facts.db', 'wb'))
         else:
             msg = irc.IRCPrivateMessage(
                 dest,
@@ -150,4 +153,12 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
             )
         )
 
-        self.factoids = []
+        if os.path.exists('facts.db'):
+            self.factoids = cPickle.load(open('facts.db', 'rb'))
+        else:
+            self.factoids = []
+
+        for fact in self.factoids:
+            self.commands.append(
+                plugins.BasePlugin.Command(self.factoid, ["%%nick%%", "%%prefix%%"], [fact.name])
+            )
