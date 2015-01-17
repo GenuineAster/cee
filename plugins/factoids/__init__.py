@@ -50,20 +50,26 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
             dest = message.sender.nick                                                                              
         else:                                                                                                       
             dest = message.destination                                                                              
-                                             
+        
         cmd = data.get("full_command", "")
         cmd.lstrip().rstrip()
         factoid_name = cmd.split(" ", 1)[0]
+
+        bar = cmd.split("|")
+        if len(bar) > 1:
+            ping = bar[1]
+        else:
+            ping = message.sender.nick
         
         factoids_match = [x for x in self.factoids if x.name == factoid_name]
         if factoids_match:
             factoid_msg = factoids_match[0].factoid
             msg = irc.IRCPrivateMessage(                                                                                
                 dest,                                                                                                   
-                "%s: %s" % (message.sender.nick, factoid_msg)
+                "%s: %s" % (ping, factoid_msg)
             )
         else:
-            msg = irc.IRCPrivateMessage(dest, "Factoid not found: %s" % factoid_name)
+            msg = irc.IRCPrivateMessage(dest, "%s: Factoid not found: %s" % (ping, factoid_name))
 
         self.connection.send_message(msg)                                                                           
         return True                                                                                                 

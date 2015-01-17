@@ -45,3 +45,4 @@ test.py
 
 *.sublime-project
 *.sublime-workspace
+facts.db
