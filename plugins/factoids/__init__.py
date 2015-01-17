@@ -57,7 +57,7 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
 
         bar = cmd.split("|")
         if len(bar) > 1:
-            ping = bar[1]
+            ping = bar[1].lstrip().rstrip()
         else:
             ping = message.sender.nick
         
