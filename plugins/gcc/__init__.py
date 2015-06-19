@@ -24,6 +24,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
 
         self.compiler_command = [
             "gcc",
+            "-g",
             "-std=c11",
             "-w",
             "-fmessage-length=0",
