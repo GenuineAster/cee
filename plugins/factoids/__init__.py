@@ -2,7 +2,8 @@ import os
 import time
 import irc
 import plugins.BasePlugin
-import cPickle
+#import cPickle
+import json
 
 class Factoid:
     name = None
@@ -11,6 +12,27 @@ class Factoid:
     date_created = None
     date_edited = None
     factoid = None
+    
+    def to_dict(self):
+        data = {}
+        data["name"] = self.name
+        data["author_created"] = self.author_created
+        data["author_edited"] = self.author_edited
+        data["date_created"] = self.date_created
+        data["date_edited"] = self.date_edited
+        data["factoid"] = self.factoid
+        return data
+
+    def from_dict(self, data):
+        self.name = data["name"]
+        self.author_created = data["author_created"]
+        self.author_edited = data["author_edited"]
+        self.date_created = data["date_created"]
+        self.date_edited = data["date_edited"]
+        self.factoid = data["factoid"]
+
+
+        
 
 class Plugin(plugins.BasePlugin.BasePlugin, object):
 
@@ -41,6 +63,30 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
         self.connection.send_message(msg)
         return True        
 
+#    def save_pickle(self):
+#        cPickle.dump(self.factoids, open('facts.db', 'wb'))
+
+#    def load_pickle(self):
+#        if os.path.exists('facts.db'):
+#            self.factoids = cPickle.load(open('facts.db', 'rb'))
+#        else:
+#            self.factoids = []
+
+    def save_json(self):
+        facts = []
+        for factoid in self.factoids:
+            facts.append(factoid.to_dict())
+        json.dump(facts, open('facts.json', 'w'))
+
+    def load_json(self):
+        if os.path.exists('facts.json'):
+            facts = json.load(open('facts.json', 'r'))
+            for fact in facts:
+                factoid = Factoid()
+                factoid.from_dict(fact)
+                self.factoids.append(factoid)
+        else:
+            self.factoids = []
         
     def factoid(self, data):
         dest = ""                                                                                                   
@@ -115,7 +161,9 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
                 dest,
                 "%s: factoid added: %s: %s." % (message.sender.nick, fact.name, fact.factoid)
             )
-            cPickle.dump(self.factoids, open('facts.db', 'wb'))
+            #cPickle.dump(self.factoids, open('facts.db', 'wb'))
+            #self.save_pickle()
+            self.save_json()
         else:
             msg = irc.IRCPrivateMessage(
                 dest,
@@ -159,10 +207,15 @@ class Plugin(plugins.BasePlugin.BasePlugin, object):
             )
         )
 
-        if os.path.exists('facts.db'):
-            self.factoids = cPickle.load(open('facts.db', 'rb'))
-        else:
-            self.factoids = []
+        #if os.path.exists('facts.db'):
+        #    self.factoids = cPickle.load(open('facts.db', 'rb'))
+        #else:
+        #    self.factoids = []
+
+        self.factoids = []
+#        self.load_pickle()
+#        self.save_json()
+        self.load_json()
 
         for fact in self.factoids:
             self.commands.append(
