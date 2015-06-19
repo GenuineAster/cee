@@ -90,7 +90,7 @@ def run_irc_instance(config, plugin_manager):
             if not thread.isAlive():
                 command_threads.pop(i)
 
-        time.sleep(0.01)
+        time.sleep(0.005)
 
 threads = []
 
