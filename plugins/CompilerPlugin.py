@@ -58,9 +58,10 @@ class CompilerPlugin(plugins.BasePlugin.BasePlugin, object):
         program_output_raw = ""
         message_string = ""
 
+	tmp_fname = "files/output/cee_output_%s" % re.sub('[^0-9a-zA-Z]+', '*', filename)
+
         output = open(
-            "files/output/cee_output_%s" %
-            re.sub('[^0-9a-zA-Z]+', '*', filename),
+            tmp_fname,
             "w+"
         )
 
@@ -97,8 +98,7 @@ class CompilerPlugin(plugins.BasePlugin.BasePlugin, object):
             output.flush()
             output.close()
             output = open(
-                "files/output/cee_output_%s" %
-                re.sub('[^0-9a-zA-Z]+', '*', filename),
+                tmp_fname,
                 "r"
             )
 
@@ -147,7 +147,8 @@ class CompilerPlugin(plugins.BasePlugin.BasePlugin, object):
                     message_string = "<no output> ( return value was %d ) " % (
                         program_output_data.get("exitcode", -1)
                     )
-
+            output.close()
+            os.remove(tmp_fname)
             return message_string
 
     def snippet(self, data, extra_args):
@@ -164,6 +165,7 @@ class CompilerPlugin(plugins.BasePlugin.BasePlugin, object):
         code_filename = ""
 
         while 1:
+            rand_name = random.randint(0, 100000)
             output_filename = "files/output/%d" % rand_name
             code_filename = "files/output/code.%d.%s" % (
                 rand_name, extra_args.get("lang_extension", None)
