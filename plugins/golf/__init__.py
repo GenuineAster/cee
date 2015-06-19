@@ -26,6 +26,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
             "clang++",
             "-std=c++11",
             "-w",
+            "-g",
             "-fmessage-length=0",
             "-ftemplate-depth-128",
             "-fno-elide-constructors",

@@ -26,6 +26,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
 
         self.compiler_command = [
             "clang++",
+            "-g",
             "-Wall",
             "-std=c++1y",
             "-fmessage-length=0",

@@ -24,8 +24,12 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
 
         self.compiler_command = [
             "g++",
+            "-Werror",
+            "-Wextra",
             "-Wall",
-            "-std=c++11",
+            "-Wpedantic",
+            "-Wunused",
+            "-std=gnu++1y",
             "-finput-charset=UTF-8",
             "-fno-use-linker-plugin",
             "-fmessage-length=0",
@@ -37,7 +41,8 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
             "-fstrict-aliasing",
             "-fstack-protector-all",
             "-trigraphs",
-            "-Wno-trigraphs"
+            "-Wno-trigraphs",
+            "-g"
         ]
 
         super(Plugin, self).__init__(**kwargs)

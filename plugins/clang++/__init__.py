@@ -28,7 +28,8 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
             "clang++",
 #            "-Wall",
             "-std=c++1y",
-            "-trigraphs"
+            "-trigraphs",
+            "-g",
 #            "-fmessage-length=0",
 #            "-ftemplate-depth-128",
 #            "-fno-elide-constructors",
