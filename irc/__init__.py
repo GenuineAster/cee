@@ -132,7 +132,7 @@ class IRCConnection(object):
         lines = self.readlines[:]
 
         for raw_line in lines:
-            #print(raw_line)
+            print(raw_line)
 
             line = raw_line
             line = string.rstrip(line)
@@ -140,8 +140,9 @@ class IRCConnection(object):
 
             try:
 
-                if line[0] == "PING":
-                    self.socket_send("PONG %s" % line[1])
+#                if line[0] == "PING":
+#                    print "EVERYTHING IS BROKEN HELP"
+#                    self.socket_send("PONG %s" % line[1])
 
                 if line[1] == "001":
                     self.ready = True
@@ -182,6 +183,12 @@ class IRCConnection(object):
                 temp = string.split(self.readbuffer, "\n")
                 for line in temp:
                     self.readlines.append(line)
+                    words = line.rstrip()
+                    words = words.lstrip()
+                    words = words.split()
+                    if len(words)>1 and words[0] == "PING":
+                        print "EVERYTHING IS BROKEN HELP"
+                        self.socket_send("PONG %s" % words[1])
                 self.readbuffer = self.readlines.pop()
             time.sleep(0.1)
 
