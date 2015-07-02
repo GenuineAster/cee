@@ -58,14 +58,14 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
             )
         )
         self.commands.append(
-            plugins.BasePlugin.Command(                           
+            plugins.BasePlugin.Command(
                 self.curly_brace_snippet, ["%%prefix%%"], ["g++ {", "g++{"],
-                {                                                 
-                    "prefix_files": ["files/template.cpp"],       
-                    "suffix_files": [],                           
-                    "lang_extension": "cpp"                       
-                }                                                 
-            )                                                     
+                {
+                    "prefix_files": ["files/template.cpp"],
+                    "suffix_files": [],
+                    "lang_extension": "cpp"
+                }
+            )
         )
         self.commands.append(
             plugins.BasePlugin.Command(
@@ -77,16 +77,16 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
                 }
             )
         )
-        self.commands.append(                                 
-            plugins.BasePlugin.Command(                       
+        self.commands.append(
+            plugins.BasePlugin.Command(
                 self.stream_snippet, ["%%prefix%%"], ["g++<<", "g++ <<"],
-                {                                             
-                    "prefix_files": ["files/template.cpp"],   
-                    "suffix_files": [],                       
-                    "lang_extension": "cpp"                   
-                }                                             
-            )                                                 
-        )                                                     
+                {
+                    "prefix_files": ["files/template.cpp"],
+                    "suffix_files": [],
+                    "lang_extension": "cpp"
+                }
+            )
+        )
         self.commands.append(
             plugins.BasePlugin.Command(
                 self.snippet, ["%%prefix%%"], ["g++"],
