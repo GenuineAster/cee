@@ -20,6 +20,7 @@ cee has greatly evolved as a project, and now supports many languages, such as:
  - Python 3
 - JavaScript
 - Perl
+- Go
 
 
 cee requires:
