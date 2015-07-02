@@ -14,7 +14,7 @@ class Plugin(plugins.CompilerPlugin.CompilerPlugin, object):
         return self.snippet(data, extra_args)
 
     def __init__(self, **kwargs):
-        self.name = "go
+        self.name = "go"
         self.author = "nekomune"
         self.description = "A go compiler plugin."
 
