@@ -58,7 +58,7 @@ class CompilerPlugin(plugins.BasePlugin.BasePlugin, object):
         program_output_raw = ""
         message_string = ""
 
-	tmp_fname = "files/output/cee_output_%s" % re.sub('[^0-9a-zA-Z]+', '*', filename)
+        tmp_fname = "files/output/cee_output_%s" % re.sub('[^0-9a-zA-Z]+', '*', filename)
 
         output = open(
             tmp_fname,
