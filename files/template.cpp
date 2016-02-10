@@ -60,7 +60,9 @@
 //#define GLM_SWIZZLE
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+//#include <glm/gtc/half_float.hpp>
 
+#include <cxxabi.h>
 
 
 
@@ -118,3 +120,71 @@ bin_proxy operator<<(std::ostream &os, bin_creator) {
     return bin_proxy(os);
 }
 }
+
+std::ostream &operator<<(std::ostream &os, const std::type_info &info) {
+	int tmp;
+	char *data = abi::__cxa_demangle(info.name(), 0, 0, &tmp);
+	os << data;
+	free(data);
+	return os;
+}
+
+namespace cee
+{
+class probe
+{
+    static int32_t nextInstanceNumber;
+    public:
+    probe(): id("-"), instanceNumber(nextInstanceNumber++)
+    {
+        print("C");
+    }
+    probe(std::string _id): id(std::move(_id)), instanceNumber(nextInstanceNumber++)
+    {
+        print("C");
+    }
+    
+    probe(const probe& other): id(other.id), instanceNumber(nextInstanceNumber++)
+    {   
+        print("CC");
+    }   
+    
+    probe(probe&& other): id(other.id), instanceNumber(nextInstanceNumber++)
+    {   
+        other.id = "-";
+        print("MC");
+    }   
+
+    probe& operator=(const probe& other)
+    {   
+        id = other.id;
+        print("A");
+        return *this;
+    }   
+
+    probe& operator=(probe&& other)
+    {   
+        id = other.id;
+        other.id = "-";
+        print("MA");
+        return *this;
+    }   
+    
+    ~probe()
+    {   
+        print("D");
+    }   
+    
+    private:
+    void print(const std::string& action)
+    {   
+        std::cout << action << ":" << id << "#" << instanceNumber << " ";
+    }   
+
+    std::string id; 
+    int32_t instanceNumber;
+};
+
+int32_t probe::nextInstanceNumber = 0;
+}
+
