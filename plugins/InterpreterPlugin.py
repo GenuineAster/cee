@@ -17,7 +17,7 @@ class InterpreterPlugin(plugins.BasePlugin.BasePlugin, object):
     interpreter_command = None
 
     def strip_output(self, message_string, program_output):
-        if len(program_output) > 1:
+        if len(program_output) > 1 and not(len(program_output) == 2 and len(program_output[1]) == 0):
             message_string = to_bytes(
                 message_string +
                 " [+%d deleted lines]" % (len(program_output) - 1)
